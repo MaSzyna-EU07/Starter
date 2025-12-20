@@ -430,9 +430,9 @@ begin
   SetFormatSettings;
 
 {$IFDEF WIN64}
-  FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit' + ' beta';
+  FileVersion := GetFileVersion(ParamStr(0)) + ' 64-bit'; // + ' beta';
 {$ELSE}
-  FileVersion := GetFileVersion(ParamStr(0)) + ' beta';
+  FileVersion := GetFileVersion(ParamStr(0)); // + ' beta';
 {$ENDIF}
   FileAge(ParamStr(0), FileDate);
   FileDateStr := FormatDateTime(' dd.mm.yyyy', FileDate);
