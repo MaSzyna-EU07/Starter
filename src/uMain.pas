@@ -2043,6 +2043,9 @@ begin
 end;
 
 procedure TMain.cbGfxrendererChange(Sender: TObject);
+var
+  dlg: TForm;
+  res: Integer;
 begin
   if cbGfxrenderer.ItemIndex = 1 then
   begin
@@ -2056,8 +2059,23 @@ begin
   ReloadSettingsState;
 
   if cbGfxrenderer.ItemIndex = 4 then
-    ShowMessage
-      ('Renderer eksperymentalny jako testowy mo¿e nie dzia³aæ stabilnie na wszystkich komputerach.');
+  begin
+    dlg := CreateMessageDialog
+      ('Renderer eksperymentalny jako testowy mo¿e nie dzia³aæ stabilnie na wszystkich komputerach!'#13#10
+      + 'Zespó³ developerów nie przyjmuje zg³oszeñ zwi¹zanych z nieprawid³owym dzia³aniem tego trybu.'#13#10#13#10
+      + 'Czy wyra¿asz zgodê na prze³¹czenie z powrotem w tryb pe³ny (stabilny)?',
+      mtWarning, [mbYes, mbNo]);
+    try
+      dlg.Caption := 'Ostrze¿enie';
+      res := dlg.ShowModal;
+      if res = mrYes then
+        cbGfxrenderer.ItemIndex := 0;
+    finally
+      dlg.Free;
+    end;
+  end;
+  // ShowMessage
+  // ('Renderer eksperymentalny jako testowy mo¿e nie dzia³aæ stabilnie na wszystkich komputerach.');
 end;
 
 procedure TMain.cbHDRChange(Sender: TObject);
