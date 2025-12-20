@@ -785,9 +785,9 @@ object Main: TMain
     end
     object cbLang: TComboBox
       AlignWithMargins = True
-      Left = 565
+      Left = 592
       Top = 3
-      Width = 87
+      Width = 60
       Height = 44
       Hint = 'j'#281'zyk/language/jazyk/nyelv'
       Align = alRight
@@ -813,7 +813,7 @@ object Main: TMain
         'HU')
     end
     object pnlVersion: TPanel
-      Left = 473
+      Left = 500
       Top = 0
       Width = 89
       Height = 50
@@ -821,6 +821,7 @@ object Main: TMain
       BevelOuter = bvNone
       ShowCaption = False
       TabOrder = 5
+      ExplicitLeft = 473
       object lbVersionCaption: TLabel
         Left = 0
         Top = 0
