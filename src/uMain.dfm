@@ -821,7 +821,6 @@ object Main: TMain
       BevelOuter = bvNone
       ShowCaption = False
       TabOrder = 5
-      ExplicitLeft = 473
       object lbVersionCaption: TLabel
         Left = 0
         Top = 0
@@ -1634,6 +1633,7 @@ object Main: TMain
                     'Wagony P'
                     'Wagony R'
                     'Wagony S'
+                    'Wagony T'
                     'Wagony U'
                     'Wagony V'
                     'Wagony W'

@@ -23,234 +23,236 @@ unit uStructures;
 interface
 
 uses System.Generics.Collections, System.Generics.Defaults, CastaliaPasLexTypes,
-      Classes;
+  Classes;
 
 type
-  TFlag = (F128 = 128,F64 = 64,F32 = 32,F16 = 16,F8 = 8,F4 = 4,F2 = 2,F1 = 1);
+  TFlag = (F128 = 128, F64 = 64, F32 = 32, F16 = 16, F8 = 8, F4 = 4,
+    F2 = 2, F1 = 1);
   TFlags = set of TFlag;
 
   TTrainParams = record
-    Length        : Double;
-    Mass          : Double;
-    LoadMass      : Double;
-    CountVehicles : Integer;
+    Length: Double;
+    Mass: Double;
+    LoadMass: Double;
+    CountVehicles: Integer;
   end;
 
-  TIncludeType = (itDefDisabled,itDefEnabled,itTerrain);
+  TIncludeType = (itDefDisabled, itDefEnabled, itTerrain);
 
-  TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
-          tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
-          tyROBOCZY,tyDREZYNA, tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,
-          tyPROTOTYP, tyINNE, tyUNKNOWN);
+  TTyp = (tyELEKTROWOZ, tySPALINOWOZ, tyPAROWOZ, tySZYNOBUS, tyEZT, tyA, tyB,
+    tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyT, tyU, tyV, tyW, tyX,
+    tyZ, tyROBOCZY, tyDREZYNA, tyTRAMWAJ, tySAMOCHOD, tyAUTOBUS, tyCIEZAROWKA,
+    tyOSOBA, tyZWIERZE, tyPROTOTYP, tyINNE, tyUNKNOWN);
 
   TVehicleType = record
-      Sign  : Char;
-      Typ   : TTyp;
-    end;
+    Sign: Char;
+    tyP: TTyp;
+  end;
 
-  TCabOccupancy = (coHeadDriver,coRearDriver,coPassenger,coNobody);
+  TCabOccupancy = (coHeadDriver, coRearDriver, coPassenger, coNobody);
 
-  TTexError = (teNoFile,teNoModel,teNoPhysics,teNoMultimedia);
+  TTexError = (teNoFile, teNoModel, teNoPhysics, teNoMultimedia);
   TTexErrors = set of TTexError;
 
-  TPhysicsSections = (psOther,psParam,psLoad,psDimension,psWheels,psBrake,psBuffCoupl,psBuffCouplA,psBuffCouplB,psCntrl);
+  TPhysicsSections = (psOther, psParam, psLoad, psDimension, psWheels, psBrake,
+    psBuffCoupl, psBuffCouplA, psBuffCouplB, psCntrl);
 
-  TSelectedList = (slSCN,slDEPO);
+  TSelectedList = (slSCN, slDEPO);
 
   TModifierKey = (mkShift, mkCtrl);
   TModifierKeys = set of TModifierKey;
 
   TPhysicsInc = class
-    Path    : string;
-    Params  : TStringList;
+    Path: string;
+    Params: TStringList;
     constructor Create;
-    //destructor Destroy;
+    // destructor Destroy;
   end;
 
   TPhysics = class
-    Name          : string;
-    Dir           : string;
-    Mass          : Double;
-    VMax          : Double;
-    Length        : Double;
-    LoadAccepted  : string;
-    MaxLoad       : Integer;
-    AllowedFlagA  : Integer;
-    AllowedFlagB  : Integer;
-    ControlTypeA  : string;
-    ControlTypeB  : string;
+    Name: string;
+    Dir: string;
+    Mass: Double;
+    VMax: Double;
+    Length: Double;
+    LoadAccepted: string;
+    MaxLoad: Integer;
+    AllowedFlagA: Integer;
+    AllowedFlagB: Integer;
+    ControlTypeA: string;
+    ControlTypeB: string;
   end;
 
   TModel = class
-    Model : string;
-    Mini  : string;
-    MiniD : string;
-    Fiz   : TPhysics;
+    Model: string;
+    Mini: string;
+    MiniD: string;
+    Fiz: TPhysics;
   end;
 
   TTexture = class
-    ID    : Integer;
-    Plik  : string;
-    Models  : TObjectList<TModel>;
-    Desc  : string;
-    Dir   : string;
-    Typ    : TTyp;
-    Errors : TTexErrors;
-    Version   : string;
-    Mark      : string;
-    Owner     : string;
-    Station   : string;
-    Revision  : string;
-    Works     : string;
-    Author    : string;
-    Photos    : string;
-    NextTexID : Integer;
-    PrevTexID : Integer;
-    Crew      : Integer;
-    Archive   : Boolean;
+    ID: Integer;
+    Plik: string;
+    Models: TObjectList<TModel>;
+    Desc: string;
+    Dir: string;
+    tyP: TTyp;
+    Errors: TTexErrors;
+    Version: string;
+    Mark: string;
+    Owner: string;
+    Station: string;
+    Revision: string;
+    Works: string;
+    Author: string;
+    Photos: string;
+    NextTexID: Integer;
+    PrevTexID: Integer;
+    Crew: Integer;
+    Archive: Boolean;
   private
     function GetFirstIndex: Integer;
     function GetLastIndex: Integer;
   public
     constructor Create;
-    property FirstIndex : Integer read GetFirstIndex;
-    property LastIndex  : Integer read GetLastIndex;
+    property FirstIndex: Integer read GetFirstIndex;
+    property LastIndex: Integer read GetLastIndex;
   end;
 
   TVehicleParams = record
-    Brake           : string;
-    BrakeState      : string;
-    BrakeAdjust     : string;
-    Sway            : Integer; // wezykowanie
-    Flatness        : Integer; // podkucie x mm
-    FlatnessRand    : Integer; // podkucie losowe 0-x mm
-    FlatnessProb    : Integer; // prawdopodobienstwo poducia
-    Wheel           : Char;
-    Loadquantity    : Integer;
-    LoadType        : string;
-    ThermoDynamic   : Boolean;
+    Brake: string;
+    BrakeState: string;
+    BrakeAdjust: string;
+    Sway: Integer; // wezykowanie
+    Flatness: Integer; // podkucie x mm
+    FlatnessRand: Integer; // podkucie losowe 0-x mm
+    FlatnessProb: Integer; // prawdopodobienstwo poducia
+    Wheel: Char;
+    Loadquantity: Integer;
+    LoadType: string;
+    ThermoDynamic: Boolean;
   end;
 
   TVehicle = class(TPersistent)
   public
-    MinDist         : Double;
-    MaxDist         : Double;
-    Name            : string;
-    Dir             : string;
-    ReplacableSkin  : string;
-    TypeChk         : string;
-    PathName        : string;
-    Dist            : Double;
-    CabOccupancy    : TCabOccupancy;
-    Vel             : Double;
-    Settings        : string;
-    Coupler         : Integer;
-    Brake           : string;
-    BrakeState      : string;
-    BrakeAdjust     : string;
-    Sway            : Integer; // wezykowanie
-    Flatness        : Integer; // podkucie x mm
-    FlatnessRand    : Integer; // podkucie losowe 0-x mm
-    FlatnessProb    : Integer; // prawdopodobienstwo poducia
-    Wheel           : Char;
-    Loadquantity    : Integer;
-    LoadType        : string;
-    ThermoDynamic   : Boolean;
-    Texture         : TTexture;
-    ModelID         : Integer;
-    Number          : Integer;
-    MaxLoad         : Integer;
+    MinDist: Double;
+    MaxDist: Double;
+    Name: string;
+    Dir: string;
+    ReplacableSkin: string;
+    TypeChk: string;
+    PathName: string;
+    Dist: Double;
+    CabOccupancy: TCabOccupancy;
+    Vel: Double;
+    Settings: string;
+    Coupler: Integer;
+    Brake: string;
+    BrakeState: string;
+    BrakeAdjust: string;
+    Sway: Integer; // wezykowanie
+    Flatness: Integer; // podkucie x mm
+    FlatnessRand: Integer; // podkucie losowe 0-x mm
+    FlatnessProb: Integer; // prawdopodobienstwo poducia
+    Wheel: Char;
+    Loadquantity: Integer;
+    LoadType: string;
+    ThermoDynamic: Boolean;
+    Texture: TTexture;
+    ModelID: Integer;
+    Number: Integer;
+    MaxLoad: Integer;
   private
     function GetPhysics: TPhysics;
     function GetModel: TModel;
   public
-    property Fiz    : TPhysics read GetPhysics;
-    property Model  : TModel read GetModel;
-  {public
-    property MinDist  : Double read FMinDist write FMinDist;
-    property MaxDist  : Double read FMaxDist write FMaxDist;
-    property Name  : string read FName write FName;
-    property Dir  : string read FDir write FDir;
-    property ReplacableSkin  : string read FReplacableSkin write FReplacableSkin;
-    property TypeChk  : string read FFypeChk write FFypeChk;
-    property PathName  : string read FPathName write FPathName;
-    property Dist  : Double read FDist write FDist;
-    property CabOccupancy  : TCabOccupancy read FCabOccupancy write FCabOccupancy;
-    property Vel  : Double read FVel write FVel;
-    property Settings  : string read FSettings write FSettings;
-    property Coupler  : Integer read FCoupler write FCoupler;
-    property Brake  : string read FBrake write FBrake;
-    property BrakeState  : string read FBrakeState write FBrakeState;
-    property BrakeAdjust  : string read FBrakeAdjust write FBrakeAdjust;
-    property Sway  : Integer read FSway write FSway;
-    property Flatness  : Integer read FFlatness write FFlatness;
-    property FlatnessRand  : Integer read FFlatnessRand write FFlatnessRand;
-    property FlatnessProb  : Integer read FFlatnessProb write FFlatnessProb;
-    property Wheel  : Char read FWheel write FWheel;
-    property Loadquantity  : Double read FLoadquantity write FLoadquantity;
-    property LoadType  : string read FLoadType write FLoadType;
-    property Tekstura  : TTekstura read FTekstura write FTekstura;}
+    property Fiz: TPhysics read GetPhysics;
+    property Model: TModel read GetModel;
+    { public
+      property MinDist  : Double read FMinDist write FMinDist;
+      property MaxDist  : Double read FMaxDist write FMaxDist;
+      property Name  : string read FName write FName;
+      property Dir  : string read FDir write FDir;
+      property ReplacableSkin  : string read FReplacableSkin write FReplacableSkin;
+      property TypeChk  : string read FFypeChk write FFypeChk;
+      property PathName  : string read FPathName write FPathName;
+      property Dist  : Double read FDist write FDist;
+      property CabOccupancy  : TCabOccupancy read FCabOccupancy write FCabOccupancy;
+      property Vel  : Double read FVel write FVel;
+      property Settings  : string read FSettings write FSettings;
+      property Coupler  : Integer read FCoupler write FCoupler;
+      property Brake  : string read FBrake write FBrake;
+      property BrakeState  : string read FBrakeState write FBrakeState;
+      property BrakeAdjust  : string read FBrakeAdjust write FBrakeAdjust;
+      property Sway  : Integer read FSway write FSway;
+      property Flatness  : Integer read FFlatness write FFlatness;
+      property FlatnessRand  : Integer read FFlatnessRand write FFlatnessRand;
+      property FlatnessProb  : Integer read FFlatnessProb write FFlatnessProb;
+      property Wheel  : Char read FWheel write FWheel;
+      property Loadquantity  : Double read FLoadquantity write FLoadquantity;
+      property LoadType  : string read FLoadType write FLoadType;
+      property Tekstura  : TTekstura read FTekstura write FTekstura; }
   Protected
-     procedure AssignTo(Dest: TPersistent); override;
+    procedure AssignTo(Dest: TPersistent); override;
   end;
 
   TTrain = class(TPersistent)
   public
-    TrainName : string;
-    Track     : string;
-    Dist      : Double;
-    Vel       : Double;
-    Vehicles  : TObjectList<TVehicle>;
-    Desc      : string; // $o
-    AI        : Boolean;
-    TimeTable : string;
-    Logo      : string;
-    Mini      : string;
+    TrainName: string;
+    Track: string;
+    Dist: Double;
+    Vel: Double;
+    Vehicles: TObjectList<TVehicle>;
+    Desc: string; // $o
+    AI: Boolean;
+    TimeTable: string;
+    Logo: string;
+    Mini: string;
     Irrelevant: Boolean;
-  {public
-    property TrainName  : string read FTrainName write FTrainName;
-    property Track      : string read FTrack write FTrack;
-    property Dist       : Double read FDist write FDist;
-    property Vel        : Double read FVel write FVel;
-    property Vehicles   : TObjectList<TVehicle> read FVehicles write FVehicles;
-    property Desc       : string read FDesc write FDesc;
-    property AI         : Boolean read FAI write FAI;
-    property TimeTable  : string read FTimeTable write FTimeTable;}
+    { public
+      property TrainName  : string read FTrainName write FTrainName;
+      property Track      : string read FTrack write FTrack;
+      property Dist       : Double read FDist write FDist;
+      property Vel        : Double read FVel write FVel;
+      property Vehicles   : TObjectList<TVehicle> read FVehicles write FVehicles;
+      property Desc       : string read FDesc write FDesc;
+      property AI         : Boolean read FAI write FAI;
+      property TimeTable  : string read FTimeTable write FTimeTable; }
     constructor Create;
   end;
 
   TConfig = record
-    Day         : Integer;
-    Temperature : Double;
-    FogStart    : Integer;
-    FogEnd      : Integer;
-    Overcast    : Double;
-    StartTime   : TTime;
-    Time        : TTime;
-    Other       : string;
+    Day: Integer;
+    Temperature: Double;
+    FogStart: Integer;
+    FogEnd: Integer;
+    Overcast: Double;
+    StartTime: TTime;
+    Time: TTime;
+    Other: string;
   end;
 
   TInclude = class
-    Path      : string;
-    Desc      : string;
-    Kind      : TIncludeType;
+    Path: string;
+    Desc: string;
+    Kind: TIncludeType;
   end;
 
   TScenario = class
   private
-    FID          : string;       // $id - dla grupowania scenariuszy
-    FPath        : string;
-    FName        : string;
-    FTitle       : string;       // $n
-    FDesc        : TStringList;  // $d
-    FImage       : string;       // $i
-    FFiles       : TStringList;  // $f
-    FIncludes    : TObjectList<TInclude>;
-    FTrains      : TObjectList<TTrain>;
-    FVehicles    : TObjectList<TVehicle>;
-    FOther       : TStringList;
-    FConfig      : TConfig;
-    FOld         : Boolean;
+    FID: string; // $id - dla grupowania scenariuszy
+    FPath: string;
+    FName: string;
+    FTitle: string; // $n
+    FDesc: TStringList; // $d
+    FImage: string; // $i
+    FFiles: TStringList; // $f
+    FIncludes: TObjectList<TInclude>;
+    FTrains: TObjectList<TTrain>;
+    FVehicles: TObjectList<TVehicle>;
+    FOther: TStringList;
+    FConfig: TConfig;
+    FOld: Boolean;
     procedure SetDesc(const Value: TStringList);
     procedure SetFiles(const Value: TStringList);
     procedure SetTrains(const Value: TObjectList<TTrain>);
@@ -258,95 +260,62 @@ type
     procedure SetIncludes(const Value: TObjectList<TInclude>);
     procedure SetOther(const Value: TStringList);
   public
-    property ID          : string read FID write FID;
-    property Path        : string read FPath write FPath;
-    property Name        : string read FName write FName;
-    property Title       : string read FTitle write FTitle;         // $n
-    property Desc        : TStringList read FDesc write SetDesc;    // $d
-    property Image       : string read FImage write FImage;         // $i
-    property Files       : TStringList read FFiles write SetFiles;  // $f
-    property Includes    : TObjectList<TInclude> read FIncludes write SetIncludes;
-    property Trains      : TObjectList<TTrain> read FTrains write SetTrains;
-    property Vehicles    : TObjectList<TVehicle> read FVehicles write SetVehicles;
-    property Other       : TStringList read FOther write SetOther;
-    property Config      : TConfig read FConfig write FConfig;
-    property Old         : Boolean read FOld write FOld;
+    property ID: string read FID write FID;
+    property Path: string read FPath write FPath;
+    property Name: string read FName write FName;
+    property Title: string read FTitle write FTitle; // $n
+    property Desc: TStringList read FDesc write SetDesc; // $d
+    property Image: string read FImage write FImage; // $i
+    property Files: TStringList read FFiles write SetFiles; // $f
+    property Includes: TObjectList<TInclude> read FIncludes write SetIncludes;
+    property Trains: TObjectList<TTrain> read FTrains write SetTrains;
+    property Vehicles: TObjectList<TVehicle> read FVehicles write SetVehicles;
+    property Other: TStringList read FOther write SetOther;
+    property Config: TConfig read FConfig write FConfig;
+    property Old: Boolean read FOld write FOld;
     constructor Create;
   end;
 
   TKey = class
-    Name : string;
-    Desc : string;
-    ModifierKeys : TModifierKeys;
+    Name: string;
+    Desc: string;
+    ModifierKeys: TModifierKeys;
   end;
 
   TLoad = class
-    Name    : string;
-    Weight  : Integer;
+    Name: string;
+    Weight: Integer;
   end;
 
   TSList = class(TStringList)
-    public
-      constructor Create;// override;
+  public
+    constructor Create; // override;
   end;
 
 const
-  Waggons: array[0..16] of TVehicleType =
-  (
-    (Sign: 'B'; Typ: tyB),
-    (Sign: 'E'; Typ: tyE),
-    (Sign: 'A'; Typ: tyA),
-    (Sign: 'S'; Typ: tyS),
-    (Sign: 'F'; Typ: tyF),
-    (Sign: 'G'; Typ: tyG),
-    (Sign: 'R'; Typ: tyR),
-    (Sign: 'U'; Typ: tyU),
-    (Sign: 'W'; Typ: tyW),
-    (Sign: 'X'; Typ: tyX),
-    (Sign: 'Z'; Typ: tyZ),
-    (Sign: 'D'; Typ: tyD),
-    (Sign: 'H'; Typ: tyH),
-    (Sign: 'I'; Typ: tyI),
-    (Sign: 'L'; Typ: tyL),
-    (Sign: 'P'; Typ: tyP),
-    (Sign: 'V'; Typ: tyV)
-  );
+  Waggons: array [0 .. 17] of TVehicleType = ((Sign: 'B'; tyP: tyB), (Sign: 'E';
+    tyP: tyE), (Sign: 'A'; tyP: tyA), (Sign: 'S'; tyP: tyS), (Sign: 'F';
+    tyP: tyF), (Sign: 'G'; tyP: tyG), (Sign: 'R'; tyP: tyR), (Sign: 'U';
+    tyP: tyU), (Sign: 'W'; tyP: tyW), (Sign: 'X'; tyP: tyX), (Sign: 'Z';
+    tyP: tyZ), (Sign: 'D'; tyP: tyD), (Sign: 'H'; tyP: tyH), (Sign: 'I';
+    tyP: tyI), (Sign: 'L'; tyP: tyL), (Sign: 'P'; tyP: tyP), (Sign: 'T';
+    tyP: tyT), (Sign: 'V'; tyP: tyV)
 
-  Engines: array[0..31] of TVehicleType =
-  (
-    (Sign: '*'; Typ: tyUNKNOWN),
-    (Sign: 'z'; Typ: tyEZT),
-    (Sign: 'e'; Typ: tyELEKTROWOZ),
-    (Sign: 's'; Typ: tySPALINOWOZ),
-    (Sign: 'a'; Typ: tySZYNOBUS),
-    (Sign: 'B'; Typ: tyB),
-    (Sign: 'E'; Typ: tyE),
-    (Sign: 'A'; Typ: tyA),
-    (Sign: 'S'; Typ: tyS),
-    (Sign: 'F'; Typ: tyF),
-    (Sign: 'G'; Typ: tyG),
-    (Sign: 'R'; Typ: tyR),
-    (Sign: 'U'; Typ: tyU),
-    (Sign: 'r'; Typ: tyROBOCZY),
-    (Sign: 'W'; Typ: tyW),
-    (Sign: 'X'; Typ: tyX),
-    (Sign: 'd'; Typ: tyDREZYNA),
-    (Sign: 'o'; Typ: tySAMOCHOD),
-    (Sign: 'b'; Typ: tyAUTOBUS),
-    (Sign: 'c'; Typ: tyCIEZAROWKA),
-    (Sign: 'Z'; Typ: tyZ),
-    (Sign: 'D'; Typ: tyD),
-    (Sign: 'H'; Typ: tyH),
-    (Sign: 'I'; Typ: tyI),
-    (Sign: 'L'; Typ: tyL),
-    (Sign: 'P'; Typ: tyP),
-    (Sign: 'V'; Typ: tyV),
-    (Sign: 't'; Typ: tyTRAMWAJ),
-    (Sign: 'h'; Typ: tyOSOBA),
-    (Sign: 'f'; Typ: tyZWIERZE),
-    (Sign: 'p'; Typ: tyPAROWOZ),
-    (Sign: 'x'; Typ: tyPROTOTYP)
-  );
+    );
+
+  Engines: array [0 .. 32] of TVehicleType = ((Sign: '*'; tyP: tyUNKNOWN),
+    (Sign: 'z'; tyP: tyEZT), (Sign: 'e'; tyP: tyELEKTROWOZ), (Sign: 's';
+    tyP: tySPALINOWOZ), (Sign: 'a'; tyP: tySZYNOBUS), (Sign: 'B'; tyP: tyB),
+    (Sign: 'E'; tyP: tyE), (Sign: 'A'; tyP: tyA), (Sign: 'S'; tyP: tyS),
+    (Sign: 'F'; tyP: tyF), (Sign: 'G'; tyP: tyG), (Sign: 'R'; tyP: tyR),
+    (Sign: 'U'; tyP: tyU), (Sign: 'r'; tyP: tyROBOCZY), (Sign: 'W'; tyP: tyW),
+    (Sign: 'X'; tyP: tyX), (Sign: 'd'; tyP: tyDREZYNA), (Sign: 'o';
+    tyP: tySAMOCHOD), (Sign: 'b'; tyP: tyAUTOBUS), (Sign: 'c';
+    tyP: tyCIEZAROWKA), (Sign: 'Z'; tyP: tyZ), (Sign: 'D'; tyP: tyD),
+    (Sign: 'H'; tyP: tyH), (Sign: 'I'; tyP: tyI), (Sign: 'L'; tyP: tyL),
+    (Sign: 'P'; tyP: tyP), (Sign: 'T'; tyP: tyT), (Sign: 'V'; tyP: tyV),
+    (Sign: 't'; tyP: tyTRAMWAJ), (Sign: 'h'; tyP: tyOSOBA), (Sign: 'f';
+    tyP: tyZWIERZE), (Sign: 'p'; tyP: tyPAROWOZ), (Sign: 'x'; tyP: tyPROTOTYP));
 
 implementation
 
@@ -360,7 +329,7 @@ begin
 
   Trains := TObjectList<TTrain>.Create();
   Vehicles := TObjectList<TVehicle>.Create();
-  Includes  := TObjectList<TInclude>.Create();
+  Includes := TObjectList<TInclude>.Create();
 end;
 
 constructor TTrain.Create;
@@ -404,37 +373,38 @@ begin
 end;
 
 procedure TVehicle.AssignTo(Dest: TPersistent);
-var MyDestObj : TVehicle;
+var
+  MyDestObj: TVehicle;
 begin
   MyDestObj := Dest as TVehicle;
 
-  MyDestObj.MinDist        := Self.MinDist;
-  MyDestObj.MaxDist        := Self.MaxDist;
-  MyDestObj.Name           := Self.Name;
-  MyDestObj.Dir            := Self.Dir;
+  MyDestObj.MinDist := Self.MinDist;
+  MyDestObj.MaxDist := Self.MaxDist;
+  MyDestObj.Name := Self.Name;
+  MyDestObj.Dir := Self.Dir;
   MyDestObj.ReplacableSkin := Self.ReplacableSkin;
-  MyDestObj.TypeChk        := Self.TypeChk;
-  MyDestObj.PathName       := Self.PathName;
-  MyDestObj.Dist           := Self.Dist;
-  MyDestObj.CabOccupancy   := Self.CabOccupancy;
-  MyDestObj.Vel            := Self.Vel;
-  MyDestObj.Settings       := Self.Settings;
-  MyDestObj.Coupler        := Self.Coupler;
-  MyDestObj.Brake          := Self.Brake;
-  MyDestObj.BrakeState     := Self.BrakeState;
-  MyDestObj.BrakeAdjust    := Self.BrakeAdjust;
-  MyDestObj.Sway           := Self.Sway;
-  MyDestObj.Flatness       := Self.Flatness;
-  MyDestObj.FlatnessRand   := Self.FlatnessRand;
-  MyDestObj.FlatnessProb   := Self.FlatnessProb;
-  MyDestObj.Wheel          := Self.Wheel;
-  MyDestObj.Loadquantity   := Self.Loadquantity;
-  MyDestObj.LoadType       := Self.LoadType;
-  MyDestObj.Texture        := Self.Texture;
-  MyDestObj.ThermoDynamic  := Self.ThermoDynamic;
-  MyDestObj.Number         := Self.Number;
-  MyDestObj.MaxLoad        := Self.MaxLoad;
-  ModelID                  := Self.ModelID;
+  MyDestObj.TypeChk := Self.TypeChk;
+  MyDestObj.PathName := Self.PathName;
+  MyDestObj.Dist := Self.Dist;
+  MyDestObj.CabOccupancy := Self.CabOccupancy;
+  MyDestObj.Vel := Self.Vel;
+  MyDestObj.Settings := Self.Settings;
+  MyDestObj.Coupler := Self.Coupler;
+  MyDestObj.Brake := Self.Brake;
+  MyDestObj.BrakeState := Self.BrakeState;
+  MyDestObj.BrakeAdjust := Self.BrakeAdjust;
+  MyDestObj.Sway := Self.Sway;
+  MyDestObj.Flatness := Self.Flatness;
+  MyDestObj.FlatnessRand := Self.FlatnessRand;
+  MyDestObj.FlatnessProb := Self.FlatnessProb;
+  MyDestObj.Wheel := Self.Wheel;
+  MyDestObj.Loadquantity := Self.Loadquantity;
+  MyDestObj.LoadType := Self.LoadType;
+  MyDestObj.Texture := Self.Texture;
+  MyDestObj.ThermoDynamic := Self.ThermoDynamic;
+  MyDestObj.Number := Self.Number;
+  MyDestObj.MaxLoad := Self.MaxLoad;
+  ModelID := Self.ModelID;
 end;
 
 { TPhysicsInc }
@@ -444,11 +414,11 @@ begin
   Params := TStringList.Create;
 end;
 
-{destructor TPhysicsInc.Destroy;
-begin
+{ destructor TPhysicsInc.Destroy;
+  begin
   Params.Free;
   inherited;
-end;}
+  end; }
 
 function TVehicle.GetModel: TModel;
 begin
@@ -468,22 +438,24 @@ end;
 
 function TTexture.GetFirstIndex: Integer;
 var
-  i : Integer;
+  i: Integer;
 begin
   i := 0;
-  while (Self.ID-i > 0)
-    and (Data.Textures[Self.ID-i-1].NextTexID = Data.Textures[Self.ID-i].ID) do
+  while (Self.ID - i > 0) and
+    (Data.Textures[Self.ID - i - 1].NextTexID = Data.Textures
+    [Self.ID - i].ID) do
     Inc(i);
   Result := Self.ID - i;
 end;
 
 function TTexture.GetLastIndex: Integer;
 var
-  i : Integer;
+  i: Integer;
 begin
   i := 0;
-  while (Self.ID+i > Data.Textures.Count-1)
-    and (Data.Textures[Self.ID+i+1].NextTexID = Data.Textures[Self.ID+i].ID) do
+  while (Self.ID + i > Data.Textures.Count - 1) and
+    (Data.Textures[Self.ID + i + 1].NextTexID = Data.Textures
+    [Self.ID + i].ID) do
     Inc(i);
   Result := Self.ID + i;
 end;

@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>Starter.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -74,10 +74,13 @@
         <DCC_OutputDRCFile>true</DCC_OutputDRCFile>
         <Custom_Styles>Carbon|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Carbon.vsf</Custom_Styles>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_MajorVer>8</VerInfo_MajorVer>
+        <VerInfo_MajorVer>7</VerInfo_MajorVer>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
         <VerInfo_Locale>1045</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=8.0.0.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=;OriginalFilename=Starter;ProgramID=Starer;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=7.21.1.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=;OriginalFilename=Starter;ProgramID=Starer;ProductName=Starter;ProductVersion=7.21.0.0;Comments=</VerInfo_Keys>
+        <DCC_Description>Starter - MaSzyna - Symulator pojazdów szynowych</DCC_Description>
+        <VerInfo_MinorVer>21</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;RESTComponents;DataSnapServerMidas;DBXDb2Driver;DBXInterBaseDriver;FlexCel_Pdf;vclactnband;FMX_FlexCel_Core;vclFireDAC;emsclientfiredac;DataSnapFireDAC;svnui;tethering;JvGlobus;FireDACADSDriver;JvPluginSystem;tmswizdXE12;DBXMSSQLDriver;JvMM;DatasnapConnectorsFreePascal;FireDACMSSQLDriver;vcltouch;JvBands;vcldb;bindcompfmx;svn;Intraweb;DBXOracleDriver;SKIA_FlexCel_Core;FlexCel_Report;inetdb;JvAppFrm;JvJans;JvNet;RaizeComponentsVcl;Spring.Base;VCLXFiles260;FmxTeeUI;emsedge;RaizeComponentsVclDb;FireDACIBDriver;fmx;fmxdae;JvDotNetCtrls;Spring.Core;vclib;frxTee26;JvWizards;fs26;FireDACDBXDriver;dbexpress;IndyCore;vclx;frxIntIO26;JvPageComps;dsnap;DataSnapCommon;emsclient;FireDACCommon;JvDB;bdertl;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;soapserver;fsTee26;JclDeveloperTools;vclie;bindengine;DBXMySQLDriver;FireDACOracleDriver;CloudService;FireDACMySQLDriver;DBXFirebirdDriver;JvCmp;JvHMI;frx26;fsIBX26;FireDACCommonODBC;FireDACCommonDriver;DataSnapClient;frxIntIOIndy26;inet;bindcompdbx;IndyIPCommon;JvCustom;vcl;IndyIPServer;DBXSybaseASEDriver;JvXPCtrls;frxDB26;IndySystem;fsADO26;FireDACDb2Driver;frxDBX26;tmsbcl;PngComponents;dsnapcon;tmsxlsdXE12;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;fsDB26;TeeDB;FireDAC;FlexCel_XlsAdapter;Jcl;JvCore;emshosting;frxe26;tmsdXE12;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;FireDACASADriver;JvCrypt;FireDACTDataDriver;DBXOdbcDriver;FMXTee;frxIBX26;soaprtl;DbxCommonDriver;FlexCel_Core;JvDlgs;ibxpress;Tee;JvManagedThreads;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;vclwinx;ibxbindings;rtl;emsserverresource;DbxClientDriver;FireDACDSDriver;DBXSybaseASADriver;frxADO26;CustomIPTransport;vcldsnap;tmsexdXE12;vcwdXE12;JvSystem;JvStdCtrls;JvRuntimeDesign;nrcommd26;bindcomp;appanalytics;JvTimeFramework;DBXInformixDriver;IndyIPClient;bindcompvcl;TeeUI;JvDocking;dbxcds;VclSmp;VCL_FlexCel_Core;adortl;FireDACODBCDriver;JvPascalInterpreter;FlexCel_Render;JclVcl;DataSnapIndy10ServerTransport;aurelius;dsnapxml;DataSnapProviderClient;dbrtl;inetdbxpress;FireDACMongoDBDriver;IndyProtocols;JvControls;JvPrintPreview;JclContainers;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
@@ -91,15 +94,17 @@
         <UWP_DelphiLogo44>img\m.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>img\m.png</UWP_DelphiLogo150>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
+        <Debugger_CWD>E:\Hirek\Games\Steam\steamapps\common\MaSzyna</Debugger_CWD>
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
     </PropertyGroup>
-    <Import Project="icon.optset" Condition="'$(Base_Win64)'!='' And Exists('icon.optset')"/>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
         <UWP_DelphiLogo44>img\m.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>img\m.png</UWP_DelphiLogo150>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
-        <CfgDependentOn>icon.optset</CfgDependentOn>
+        <Manifest_File>(None)</Manifest_File>
+        <Debugger_CWD>E:\Hirek\Games\Steam\steamapps\common\MaSzyna</Debugger_CWD>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -115,16 +120,19 @@
         <UWP_DelphiLogo150>img\m.png</UWP_DelphiLogo150>
         <DCC_Inlining>auto</DCC_Inlining>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
+        <VerInfo_MinorVer>0</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_MajorVer>7</VerInfo_MajorVer>
-        <VerInfo_MinorVer>18</VerInfo_MinorVer>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=7.18.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=eu07.pl;FileDescription=$(MSBuildProjectName);FileVersion=7.21.1.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_PreRelease>false</VerInfo_PreRelease>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -133,18 +141,18 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=7.20.0.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_MinorVer>20</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=MaSzyna;FileDescription=$(MSBuildProjectName);FileVersion=1.21.0.0;InternalName=Starter;LegalCopyright=Damian Skrzek;LegalTrademarks=MaSzyna;OriginalFilename=Starter;ProgramID=Starter;ProductName=Starter;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
-        <VerInfo_MajorVer>7</VerInfo_MajorVer>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_MajorVer>1</VerInfo_MajorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
-        <VerInfo_MinorVer>20</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=7.20.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_MajorVer>7</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=7.21.1.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.szczawik.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Release>1</VerInfo_Release>
         <Icon_MainIcon>img\m48.ico</Icon_MainIcon>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
     </PropertyGroup>
+    <Import Project="icon.optset" Condition="'$(Base_Win64)'!='' And Exists('icon.optset')"/>
     <Import Project="iconoptions.optset" Condition="'$(Base_Win32)'!='' And Exists('iconoptions.optset')"/>
     <Import Project="iconoptions.optset" Condition="'$(Base_Win64)'!='' And Exists('iconoptions.optset')"/>
     <Import Project="iconoptions.optset" Condition="'$(Cfg_1_Win32)'!='' And Exists('iconoptions.optset')"/>
@@ -266,7 +274,7 @@
                     <RDP_Source_Files Name="Item1">Win32\Debug\MaSzyna.drc</RDP_Source_Files>
                 </RDP_Source_Files>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
                 <DeployFile LocalName="ModelSupport_Starter\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -376,6 +384,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">
@@ -1312,7 +1330,7 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
-            <ModelSupport>True</ModelSupport>
+            <ModelSupport>False</ModelSupport>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
