@@ -477,6 +477,7 @@ type
     pnlBottom: TPanel;
     lbSettingsPathDesc: TLabel;
     lbSettingsPath: TLabel;
+    imDiscord: TImage;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbTrainsClick(Sender: TObject);
@@ -637,6 +638,7 @@ type
     procedure actStartWithoutSaveSettingsExecute(Sender: TObject);
     procedure pmStartPopup(Sender: TObject);
     procedure cbEXEChange(Sender: TObject);
+    procedure imDiscordClick(Sender: TObject);
   private
     SCN: TScenario;
 
@@ -2786,6 +2788,11 @@ begin
       Result := Data.Depot[SelTrain]
   else
     Result := nil;
+end;
+
+procedure TMain.imDiscordClick(Sender: TObject);
+begin
+  OpenURL('https://discord.gg/qAh9ctWPQv');
 end;
 
 procedure TMain.imFacebookClick(Sender: TObject);
