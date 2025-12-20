@@ -22,10 +22,12 @@ unit uUpdater;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   IdServerIOHandler, IdSSL, IdSSLOpenSSL, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, uIdHTTPProgress, IdIOHandler, IdIOHandlerSocket,
+  IdTCPConnection, IdTCPClient, IdHTTP, uIdHTTPProgress, IdIOHandler,
+  IdIOHandlerSocket,
   IdIOHandlerStack, Vcl.ComCtrls, Vcl.Controls;
 
 type
@@ -37,27 +39,33 @@ type
   private
     procedure AutoUpdate;
     procedure UpdateApp(const UpdateFile: TStringList);
-    procedure IdHTTPProgressOnChange(Sender : TObject);
+    procedure IdHTTPProgressOnChange(Sender: TObject);
   public
     IdHTTPProgress: TIdHTTPProgress;
-    const
-      AppVersion = 126;
-      procedure CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
-      class procedure UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
+
+  const
+    AppVersion = 126;
+    procedure CheckUpdate(const Beta: Bool; const ReturnInfo: Bool = True);
+    class procedure UpdateProgram(const Beta: Bool = False;
+      const ReturnInfo: Bool = True);
   end;
 
 implementation
 
-uses uMain, ShellApi, System.UITypes, uUtilities;
+{$IFDEF WIN64}
 
+uses uMain, Winapi.ShellApi, System.UITypes, uUtilities;
+{$ELSE}
+
+uses uMain, ShellApi, System.UITypes, uUtilities;
+{$ENDIF}
 {$R *.dfm}
 
-
-
-procedure TfrmUpdater.CheckUpdate(const Beta:Bool;const ReturnInfo:Bool=True);
+procedure TfrmUpdater.CheckUpdate(const Beta: Bool;
+  const ReturnInfo: Bool = True);
 var
-  UpdateFile : TStringList;
-  Version : Integer;
+  UpdateFile: TStringList;
+  Version: Integer;
 begin
   UpdateFile := TStringList.Create;
   try
@@ -65,19 +73,22 @@ begin
       Show;
       Application.ProcessMessages;
 
-      {$IFDEF WIN64}
-        if Beta then
-          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version64_beta.txt')
-        else
-          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version64.txt');
-      {$ELSE}
-        if Beta then
-          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version_beta.txt')
-        else
-          UpdateFile.Text := IdHTTPProgress.Get('https://www.szczawik.net/maszyna/version.txt');
-      {$ENDIF}
-
-      if TryStrToInt(UpdateFile[0],Version) then
+{$IFDEF WIN64}
+      if Beta then
+        UpdateFile.Text := IdHTTPProgress.Get
+          ('https://www.szczawik.net/maszyna/version64_beta.txt')
+      else
+        UpdateFile.Text := IdHTTPProgress.Get
+          ('https://www.szczawik.net/maszyna/version64.txt');
+{$ELSE}
+      if Beta then
+        UpdateFile.Text := IdHTTPProgress.Get
+          ('https://www.szczawik.net/maszyna/version_beta.txt')
+      else
+        UpdateFile.Text := IdHTTPProgress.Get
+          ('https://www.szczawik.net/maszyna/version.txt');
+{$ENDIF}
+      if TryStrToInt(UpdateFile[0], Version) then
       begin
         if Version <= AppVersion then
         begin
@@ -97,7 +108,8 @@ begin
         Util.Log.Add(Util.LabelStr(CAP_UPDATE_FAULT) + ' ' + E.Message);
 
         if ReturnInfo then
-          ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
+          ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 +
+            Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
       end;
     end;
   finally
@@ -110,7 +122,8 @@ procedure TfrmUpdater.FormCreate(Sender: TObject);
 begin
   IdHTTPProgress := TIdHTTPProgress.Create(Self);
   IdHTTPProgress.IOHandler := SSL;
-  IdHTTPProgress.Request.Accept := 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
+  IdHTTPProgress.Request.Accept :=
+    'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
   IdHTTPProgress.Request.UserAgent := 'Mozilla/5.0';
 end;
 
@@ -120,10 +133,10 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TfrmUpdater.UpdateApp(const UpdateFile:TStringList);
+procedure TfrmUpdater.UpdateApp(const UpdateFile: TStringList);
 var
-  Par : TStringList;
-  Version, i : Integer;
+  Par: TStringList;
+  Version, i: Integer;
 begin
   pbProgress.Visible := True;
   Show;
@@ -135,16 +148,17 @@ begin
       Application.ProcessMessages;
 
       Par.Delimiter := ' ';
-      for i := 1 to UpdateFile.Count-1 do
+      for i := 1 to UpdateFile.Count - 1 do
       begin
         IdHTTPProgress.OnChange := IdHTTPProgressOnChange;
 
         Par.DelimitedText := UpdateFile[i];
 
-        if TryStrToInt(Par[0],Version) then
+        if TryStrToInt(Par[0], Version) then
           if Version > AppVersion then
             if ForceDirectories(ExtractFileDir(Util.DIR + '\' + Par[2])) then
-              IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/'+Par[1], Util.DIR + '\' + Par[2]);
+              IdHTTPProgress.DownloadFile('https://www.szczawik.net/maszyna/' +
+                Par[1], Util.DIR + '\' + Par[2]);
       end;
 
       if FileExists(Util.DIR + 'update.bat') then
@@ -153,7 +167,8 @@ begin
         ShowMessage(Util.LabelStr(CAP_UPDATED_PROGRAM));
     except
       on E: Exception do
-        ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
+        ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 +
+          Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
     end;
   finally
     pbProgress.Visible := False;
@@ -162,14 +177,15 @@ begin
   end;
 end;
 
-class procedure TfrmUpdater.UpdateProgram(const Beta:Bool=False;const ReturnInfo:Bool=True);
+class procedure TfrmUpdater.UpdateProgram(const Beta: Bool = False;
+  const ReturnInfo: Bool = True);
 begin
   with TfrmUpdater.Create(nil) do
-  try
-    CheckUpdate(Beta,ReturnInfo);
-  finally
-    Free;
-  end;
+    try
+      CheckUpdate(Beta, ReturnInfo);
+    finally
+      Free;
+    end;
 end;
 
 procedure TfrmUpdater.AutoUpdate;
@@ -179,7 +195,8 @@ begin
       ShellExecute(Main.Handle, 'open', 'update.bat', nil, nil, SW_HIDE);
   except
     on E: Exception do
-      ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
+      ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 +
+        Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
   end;
 end;
 

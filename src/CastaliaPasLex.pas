@@ -1,6 +1,6 @@
-{-----------------------------------------------------------------------------
-Based on mwPasLex, written by Martin Waldenburg. Modificated by szczawik
------------------------------------------------------------------------------}
+{ -----------------------------------------------------------------------------
+  Based on mwPasLex, written by Martin Waldenburg. Modificated by szczawik
+  ----------------------------------------------------------------------------- }
 
 unit CastaliaPasLex;
 
@@ -10,20 +10,20 @@ uses
   SysUtils, CastaliaPasLexTypes;
 
 var
-  Identifiers: array[#0..#255] of ByteBool;
+  Identifiers: array [#0 .. #255] of ByteBool;
 
 type
   TmwBasePasLex = class(TObject)
   private
     fOrigin: PChar;
-    fProcTable: array[#0..#255] of procedure of object;
+    fProcTable: array [#0 .. #255] of procedure of object;
     Run: Integer;
     fTokenPos: Integer;
     fLineNumber: Integer;
     FTokenID: TptTokenKind;
     fLinePos: Integer;
 
-	  function KeyHash: Integer;
+    function KeyHash: Integer;
     function GetPosXY: TTokenPoint;
     function IdentKind: TptTokenKind;
     procedure SetRunPos(Value: Integer);
@@ -32,10 +32,10 @@ type
     procedure CRProc;
     procedure EqualProc;
     procedure IdentProc;
-	  procedure LFProc;
+    procedure LFProc;
     procedure NullProc;
     procedure NumberProc;
-    //procedure MinusProc;
+    // procedure MinusProc;
     procedure SlashProc;
     procedure SpaceProc;
     procedure SquareCloseProc;
@@ -60,7 +60,7 @@ type
     procedure NextNoSpace;
     procedure Init;
 
-	  property IsJunk: Boolean read GetIsJunk;
+    property IsJunk: Boolean read GetIsJunk;
     property IsSpace: Boolean read GetIsSpace;
     property LineNumber: Integer read fLineNumber write fLineNumber;
     property LinePos: Integer read fLinePos write fLinePos;
@@ -92,25 +92,31 @@ type
 
 implementation
 
+{$IFDEF WIN64}
+uses Winapi.Windows;
+{$ELSE}
 uses Windows;
+{$ENDIF}
 
 procedure MakeIdentTable;
 var
-  I : Char;
+  I: Char;
 begin
   for I := #0 to #255 do
   begin
     case I of
-      '_', '0'..'9', 'a'..'z', 'A'..'Z': Identifiers[I] := True;
-    else Identifiers[I] := False;
+      '_', '0' .. '9', 'a' .. 'z', 'A' .. 'Z':
+        Identifiers[I] := True;
+    else
+      Identifiers[I] := False;
     end;
   end;
 end;
 
 function TmwBasePasLex.GetPosXY: TTokenPoint;
 begin
-  Result.X:= FTokenPos - FLinePos;
-  Result.Y:= FLineNumber;
+  Result.X := fTokenPos - fLinePos;
+  Result.Y := fLineNumber;
 end;
 
 function TmwBasePasLex.KeyHash: Integer;
@@ -132,29 +138,42 @@ var
 begin
   for I := #0 to #255 do
     case I of
-       #0: fProcTable[I] := NullProc;
-	    #10: fProcTable[I] := LFProc;
-	    #13: fProcTable[I] := CRProc;
-      #1..#9, #11, #12, #14..#32:
-           fProcTable[I] := SpaceProc;
-      #39: fProcTable[I] := SymbolProc;
-      '0'..'9': fProcTable[I] := NumberProc;
-      'A'..'Z', 'a'..'z', '_':
-           fProcTable[I] := IdentProc;
-      '!', '"', '%', '&', '('..'/', ':'..'@', '['..'^', '`', '~':
+      #0:
+        fProcTable[I] := NullProc;
+      #10:
+        fProcTable[I] := LFProc;
+      #13:
+        fProcTable[I] := CRProc;
+      #1 .. #9, #11, #12, #14 .. #32:
+        fProcTable[I] := SpaceProc;
+      #39:
+        fProcTable[I] := SymbolProc;
+      '0' .. '9':
+        fProcTable[I] := NumberProc;
+      'A' .. 'Z', 'a' .. 'z', '_':
+        fProcTable[I] := IdentProc;
+      '!', '"', '%', '&', '(' .. '/', ':' .. '@', '[' .. '^', '`', '~':
         begin
           case I of
-            //'-': fProcTable[I] := MinusProc;
-            '*': fProcTable[I] := StarProc;
-            ',': fProcTable[I] := CommaProc;
-            '/': fProcTable[I] := SlashProc;
-            '=': fProcTable[I] := EqualProc;
-            '[': fProcTable[I] := SquareOpenProc;
-            ']': fProcTable[I] := SquareCloseProc;
-          else fProcTable[I] := SymbolProc;
+            // '-': fProcTable[I] := MinusProc;
+            '*':
+              fProcTable[I] := StarProc;
+            ',':
+              fProcTable[I] := CommaProc;
+            '/':
+              fProcTable[I] := SlashProc;
+            '=':
+              fProcTable[I] := EqualProc;
+            '[':
+              fProcTable[I] := SquareOpenProc;
+            ']':
+              fProcTable[I] := SquareCloseProc;
+          else
+            fProcTable[I] := SymbolProc;
           end;
         end;
-    else fProcTable[I] := UnknownProc;
+    else
+      fProcTable[I] := UnknownProc;
     end;
 end;
 
@@ -196,32 +215,32 @@ end;
 
 procedure TmwBasePasLex.CommaProc;
 begin
-  Inc(Run);
-  fTokenID := ptComma;
+  inc(Run);
+  FTokenID := ptComma;
 end;
 
 procedure TmwBasePasLex.CRProc;
 begin
-  fTokenID := ptCRLF;
+  FTokenID := ptCRLF;
 
-  if FOrigin[Run + 1] = #10 then
-    Inc(Run,2)
+  if fOrigin[Run + 1] = #10 then
+    inc(Run, 2)
   else
-    Inc(Run);
+    inc(Run);
 
-  Inc(fLineNumber);
+  inc(fLineNumber);
   fLinePos := Run;
 end;
 
 procedure TmwBasePasLex.EqualProc;
 begin
-  Inc(Run);
-  fTokenID := ptEqual;
+  inc(Run);
+  FTokenID := ptEqual;
 end;
 
 procedure TmwBasePasLex.IdentProc;
 begin
-  fTokenID := IdentKind;
+  FTokenID := IdentKind;
 end;
 
 function TmwBasePasLex.IsIdentifiers(AChar: Char): Boolean;
@@ -234,98 +253,99 @@ end;
 
 procedure TmwBasePasLex.LFProc;
 begin
-  fTokenID := ptCRLF;
-  Inc(Run);
-  Inc(fLineNumber);
+  FTokenID := ptCRLF;
+  inc(Run);
+  inc(fLineNumber);
   fLinePos := Run;
 end;
 
 procedure TmwBasePasLex.NullProc;
 begin
-  fTokenID := ptNull;
+  FTokenID := ptNull;
 end;
 
 procedure TmwBasePasLex.NumberProc;
 begin
-  Inc(Run);
-  fTokenID := ptInteger;
-  while CharInSet(FOrigin[Run],['0'..'9', '.', 'e', 'E']) do
+  inc(Run);
+  FTokenID := ptInteger;
+  while CharInSet(fOrigin[Run], ['0' .. '9', '.', 'e', 'E']) do
   begin
-    if FOrigin[Run] = '.' then
-      if FOrigin[Run + 1] = '.' then
+    if fOrigin[Run] = '.' then
+      if fOrigin[Run + 1] = '.' then
         Break
       else
         FTokenID := ptFloat;
 
-    Inc(Run);
+    inc(Run);
   end;
 end;
 
-{procedure TmwBasePasLex.MinusProc;
-begin
+{ procedure TmwBasePasLex.MinusProc;
+  begin
   inc(Run);
   fTokenID := ptMinus;
-end;}
+  end; }
 
 procedure TmwBasePasLex.SlashProc;
 begin
-  case FOrigin[Run + 1] of
+  case fOrigin[Run + 1] of
     '/':
       begin
-        Inc(Run, 2);
-        fTokenID := ptSlashesComment;
-        while FOrigin[Run] <> #0 do
+        inc(Run, 2);
+        FTokenID := ptSlashesComment;
+        while fOrigin[Run] <> #0 do
         begin
-          case FOrigin[Run] of
-            #10, #13: break;
+          case fOrigin[Run] of
+            #10, #13:
+              Break;
           end;
-          Inc(Run);
+          inc(Run);
         end;
       end;
   else
     begin
-      Inc(Run);
-      fTokenID := ptSlash;
+      inc(Run);
+      FTokenID := ptSlash;
     end;
   end;
 end;
 
 procedure TmwBasePasLex.SpaceProc;
 begin
-  Inc(Run);
-  fTokenID := ptSpace;
-  while CharInSet(FOrigin[Run],[#1..#9, #11, #12, #14..#32]) do
-    Inc(Run);
+  inc(Run);
+  FTokenID := ptSpace;
+  while CharInSet(fOrigin[Run], [#1 .. #9, #11, #12, #14 .. #32]) do
+    inc(Run);
 end;
 
 procedure TmwBasePasLex.SquareCloseProc;
 begin
-  Inc(Run);
-  fTokenID := ptSquareClose;
+  inc(Run);
+  FTokenID := ptSquareClose;
 end;
 
 procedure TmwBasePasLex.SquareOpenProc;
 begin
-  Inc(Run);
-  fTokenID := ptSquareOpen;
+  inc(Run);
+  FTokenID := ptSquareOpen;
 end;
 
 procedure TmwBasePasLex.StarProc;
 begin
-  Inc(Run);
-  fTokenID := ptStar;
+  inc(Run);
+  FTokenID := ptStar;
 end;
 
 procedure TmwBasePasLex.SymbolProc;
 begin
-  Inc(Run);
-  fTokenID := ptSymbol;
+  inc(Run);
+  FTokenID := ptSymbol;
 end;
 
 procedure TmwBasePasLex.UnknownProc;
 begin
-  Inc(Run);
-  fTokenID := ptUnknown;
+  inc(Run);
+  FTokenID := ptUnknown;
 end;
 
 procedure TmwBasePasLex.Next;
@@ -334,20 +354,19 @@ begin
   DoProcTable(fOrigin[Run]);
 end;
 
-
 function TmwBasePasLex.GetIsJunk: Boolean;
 begin
-  result := IsTokenIDJunk(FTokenID);
+  Result := IsTokenIDJunk(FTokenID);
 end;
 
 function TmwBasePasLex.GetIsSpace: Boolean;
 begin
-  Result := fTokenID in [ptCRLF, ptSpace];
+  Result := FTokenID in [ptCRLF, ptSpace];
 end;
 
 function TmwBasePasLex.GetToken: string;
 begin
-  SetString(Result, (FOrigin + fTokenPos), GetTokenLen);
+  SetString(Result, (fOrigin + fTokenPos), GetTokenLen);
 end;
 
 function TmwBasePasLex.GetTokenLen: Integer;
@@ -358,11 +377,11 @@ end;
 procedure TmwBasePasLex.NextID(ID: TptTokenKind);
 begin
   repeat
-    if fTokenID = ptNull then
+    if FTokenID = ptNull then
       Break
     else
       Next;
-  until fTokenID = ID;
+  until FTokenID = ID;
 end;
 
 procedure TmwBasePasLex.NextNoJunk;
@@ -424,14 +443,15 @@ end;
 procedure TmwPasLex.InitAhead;
 begin
   fAheadLex.RunPos := RunPos;
-  FAheadLex.fLineNumber := FLineNumber;
-  FAheadLex.FLinePos := FLinePos;
+  fAheadLex.fLineNumber := fLineNumber;
+  fAheadLex.fLinePos := fLinePos;
 
   while fAheadLex.IsJunk do
     fAheadLex.Next;
 end;
 
 initialization
-  MakeIdentTable;
-end.
 
+MakeIdentTable;
+
+end.
