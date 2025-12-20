@@ -420,7 +420,8 @@ constructor TUtil.Create;
 var
   FileDate: TDateTime;
 begin
-  Dir := ExtractFilePath(ParamStr(0));
+  // Dir := ExtractFilePath(ParamStr(0));
+  Dir := IncludeTrailingPathDelimiter(GetCurrentDir);
   // DIR := 'C:\MaSzyna\';
   INIDir := INIPath;
   Log := TStringList.Create;
