@@ -245,6 +245,7 @@ end;
 function TSettings.LoadIni(const FileName:string; out aFileAge:TDateTime):TStringList;
 var
   Path : string;
+  Encoding: TEncoding;
 begin
   Result := TStringList.Create;
 
@@ -256,13 +257,15 @@ begin
 
   if not Path.IsEmpty then
   begin
-    Result.LoadFromFile(Path);
+    // Read file using Windows-1250 encoding
+    Encoding := TEncoding.GetEncoding(1250); // Windows-1250 encoding
+    Result.LoadFromFile(Path, Encoding);
     FileAge(Path,aFileAge);
   end
   else
   begin
     aFileAge := -1;
-    Path := 'Nie znaleziono pliku ustawieñ.';
+    Path := 'Nie znaleziono pliku ustawieÅ„.';
   end;
 
   if (FileName <> 'eu07_input-keyboard.ini') and
@@ -356,7 +359,7 @@ begin
     Par.Free;
   end;
 
-  TLanguages.ChangeIniLanguage('pl');
+  TLanguages.ChangeIniLanguage(Util.Lang);
 end;
 
 procedure TSettings.LoadPresets;
@@ -814,9 +817,14 @@ end;
 procedure TSettings.SaveOwnSettings;
 var
   Settings : TStringList;
+  LangText: string;
 begin
   Settings := TStringList.Create;
-  Settings.Add('lang=' + LowerCase(Main.cbLang.Text));
+  
+  // Save actual selected language, no longer specially handle Chinese
+  LangText := LowerCase(Main.cbLang.Text);
+    
+  Settings.Add('lang=' + LangText);
 
   if not Main.cbCloseApp.Checked then
     Settings.Add('AutoClosingApp=no');
@@ -1049,63 +1057,63 @@ procedure TSettings.CheckParams;
 var
   P : TParam;
 begin
-  FindParameter('width','(800) szerokoœæ ekranu');
-  FindParameter('height','(600) wysokoœæ ekranu');
+  FindParameter('width','(800) szerokoÅ›Ä‡ ekranu');
+  FindParameter('height','(600) wysokoÅ›Ä‡ ekranu');
   FindParameter('fullscreenwindowed','(no) yes: automatyczna rozdzielczosc');
-  FindParameter('fullscreen','(no) yes: tryb pe³noekranowy');
-  FindParameter('inactivepause','(yes) zatrzymanie programu, jeœli nie jest aktywnym oknem');
+  FindParameter('fullscreen','(no) yes: tryb peÅ‚noekranowy');
+  FindParameter('inactivepause','(yes) zatrzymanie programu, jeÅ›li nie jest aktywnym oknem');
   FindParameter('pause','(no) yes: zatrzymanie symulacji zaraz po wczytaniu');
   FindParameter('shadows','(yes) renderowanie cieni');
-  FindParameter('shadowtune','parametry shadowmapy (rozdzielczoœæ, nieu¿ywany, promieñ projekcji, nieu¿ywany)');
-  FindParameter('vsync','(no) ogranicznik klatek go 60 lub 30 fps zaleznie od wydajnoœci');
+  FindParameter('shadowtune','parametry shadowmapy (rozdzielczoÅ›Ä‡, nieuÅ¼ywany, promieÅ„ projekcji, nieuÅ¼ywany)');
+  FindParameter('vsync','(no) ogranicznik klatek go 60 lub 30 fps zaleznie od wydajnoÅ›ci');
   FindParameter('usevbo','(yes) Tryb renderowania VBO lub DisplayList');
-  FindParameter('gfxrenderer','(full/legacy/simple) pe³ny lub uproszczony tryb renderowania, mo¿e poprawiæ wydajnoœæ');
-  FindParameter('fullphysics','obliczanie fizyki ze zwiêkszon¹ dok³adnoœci¹. wy³¹czenie mo¿e spowodowaæ dziwne zachowania');
-  FindParameter('dynamiclights','(7) 1-7 iloœæ œwiate³ OpenGL przydzielanych pojazdom w scenie; przy starych kartach graficznych zmiejszyæ do 3');
-  FindParameter('gfx.skippipeline','(no) Ustawia uproszczony tryb renderowania bezpoœrednio do backbuffera. Wy³¹cza prawid³ow¹ implementacjê HDR i wszystkie efekty takie jak motionblur. Ustawienia z kategorii framebuffer, format i postfx bêd¹ ignorowane.');
+  FindParameter('gfxrenderer','(full/legacy/simple) peÅ‚ny lub uproszczony tryb renderowania, moÅ¼e poprawiÄ‡ wydajnoÅ›Ä‡');
+  FindParameter('fullphysics','obliczanie fizyki ze zwiÄ™kszonÄ… dokÅ‚adnoÅ›ciÄ…. wyÅ‚Ä…czenie moÅ¼e spowodowaÄ‡ dziwne zachowania');
+  FindParameter('dynamiclights','(7) 1-7 iloÅ›Ä‡ Å›wiateÅ‚ OpenGL przydzielanych pojazdom w scenie; przy starych kartach graficznych zmiejszyÄ‡ do 3');
+  FindParameter('gfx.skippipeline','(no) Ustawia uproszczony tryb renderowania bezpoÅ›rednio do backbuffera. WyÅ‚Ä…cza prawidÅ‚owÄ… implementacjÄ™ HDR i wszystkie efekty takie jak motionblur. Ustawienia z kategorii framebuffer, format i postfx bÄ™dÄ… ignorowane.');
   FindParameter('gfx.shadowmap.enabled','(yes) renderowanie cieni w rendererze shaderowym');
   FindParameter('gfx.extraeffects','(yes) Dodatkowe efekty realizowane przez shadery (np. mapowanie paralaksy)');
-  FindParameter('gfx.shadows.cab.range','Promieñ zasiêgu Ÿróde³ cieni z zewn¹trz kabiny, w metrach. Wp³ywa odwrotnie proporcjonalnie na ostroœæ cieni');
-  FindParameter('gfx.envmap.enabled','(yes) Odbicia realizowane globaln¹ cubemap¹');
-  FindParameter('gfx.reflections.framerate','(1/300) Czêstotliwoœæ odœwie¿ania odbiæ otoczenia');
+  FindParameter('gfx.shadows.cab.range','PromieÅ„ zasiÄ™gu ÅºrÃ³deÅ‚ cieni z zewnÄ…trz kabiny, w metrach. WpÅ‚ywa odwrotnie proporcjonalnie na ostroÅ›Ä‡ cieni');
+  FindParameter('gfx.envmap.enabled','(yes) Odbicia realizowane globalnÄ… cubemapÄ…');
+  FindParameter('gfx.reflections.framerate','(1/300) CzÄ™stotliwoÅ›Ä‡ odÅ›wieÅ¼ania odbiÄ‡ otoczenia');
   FindParameter('gfx.postfx.motionblur.enabled','(yes) Rozmycie powodowane ruchem');
-  FindParameter('gfx.smoke','(yes) Wyœwietlanie dymu');
-  FindParameter('gfx.smoke.fidelity','(1) 1-4 Mno¿nik iloœci cz¹stek dymu');
-  FindParameter('scalespeculars','skalowanie sk³adowej specular materia³ów dla kompatybilnoœci ze starymi modelami');
-  FindParameter('gfx.resource.sweep','usuwanie nieu¿ywanych tekstur z opengl, zalecane wy³¹czenie gdy pamiêæ karty graficznej jest wystarczaj¹ca');
-  FindParameter('gfx.resource.move','tryb konserwacji pamiêci przy usuwaniu nieu¿ywanych tekstur, mo¿e powodowaæ problemy na niektórych kartach');
-  FindParameter('debugmode','(no) yes: wy³¹cza logikê rozmyt¹ s³u¿¹c¹ do detekcji awarii, w³¹cza klawisze pomocnicze');
+  FindParameter('gfx.smoke','(yes) WyÅ›wietlanie dymu');
+  FindParameter('gfx.smoke.fidelity','(1) 1-4 MnoÅ¼nik iloÅ›ci czÄ…stek dymu');
+  FindParameter('scalespeculars','skalowanie skÅ‚adowej specular materiaÅ‚Ã³w dla kompatybilnoÅ›ci ze starymi modelami');
+  FindParameter('gfx.resource.sweep','usuwanie nieuÅ¼ywanych tekstur z opengl, zalecane wyÅ‚Ä…czenie gdy pamiÄ™Ä‡ karty graficznej jest wystarczajÄ…ca');
+  FindParameter('gfx.resource.move','tryb konserwacji pamiÄ™ci przy usuwaniu nieuÅ¼ywanych tekstur, moÅ¼e powodowaÄ‡ problemy na niektÃ³rych kartach');
+  FindParameter('debugmode','(no) yes: wyÅ‚Ä…cza logikÄ™ rozmytÄ… sÅ‚uÅ¼Ä…cÄ… do detekcji awarii, wÅ‚Ä…cza klawisze pomocnicze');
   FindParameter('ai.trainman','wirtualny manewrowy');
-  FindParameter('soundenabled','(yes) no: wy³¹cza odgrywanie dŸwiêków przestrzennych');
-  FindParameter('enabletraction','(yes) no: wy³¹cza ³amanie pantografu');
-  FindParameter('livetraction','(yes) no: lokomotywy elektryczne bêd¹ mia³y zasilanie, jeœli tylko podnios¹ pantografy');
-  FindParameter('physicslog','(no) yes: w³¹cza zapisywanie parametrów fizycznych dla wszystkich obsadzonych przez AI lub cz³owieka pojazdów');
-  FindParameter('debuglog','(3=yes) informacje o uruchamianiu i przebiegu dzia³ania symulacji: +1 - do pliku log.txt, +2 - wyœwietlanie w oknie, +4 - nazwy torów');
-  FindParameter('multiplelogs','(no) zapisywanie logów do katalogu /logs/ bez nadpisywania po ka¿dym uruchomieniu symulacji');
-  FindParameter('input.gamepad','(yes) no: ignorowanie sygna³u z gamepada, przydatne dla u¿ytkowników PoKeys');
-  FindParameter('mousescale','(3.2 0.5) czu³oœæ myszy, mo¿na dawaæ ujemne dla odwrócenia kierunku');
-  FindParameter('feedbackmode','(1) 0 - wy³¹czone, 1 - za³¹czone sterowanie diodami klawiatury (Caps Lock - CA/SHP, Scroll Lock - jazda na oporach rozruchowych), 2 - (Caps - CA, Scroll -SHP), 3 - LPT, 4 - PoKeys55, 5 - COM');
-  FindParameter('feedbackport','adres (dziesiêtnie) bazowy portu LPT dla feedbackmode 3 (zapalanie kontrolek wyjœciami LPT)');
-  FindParameter('friction','(1.0) mno¿nik dla wspó³czynnika tarcia');
-  FindParameter('fieldofview','(45) 15-75 k¹t widzenia kamery w pionie');
-  FindParameter('sound.volume','globalna g³oœnoœæ dŸwiêków');
+  FindParameter('soundenabled','(yes) no: wyÅ‚Ä…cza odgrywanie dÅºwiÄ™kÃ³w przestrzennych');
+  FindParameter('enabletraction','(yes) no: wyÅ‚Ä…cza Å‚amanie pantografu');
+  FindParameter('livetraction','(yes) no: lokomotywy elektryczne bÄ™dÄ… miaÅ‚y zasilanie, jeÅ›li tylko podniosÄ… pantografy');
+  FindParameter('physicslog','(no) yes: wÅ‚Ä…cza zapisywanie parametrÃ³w fizycznych dla wszystkich obsadzonych przez AI lub czÅ‚owieka pojazdÃ³w');
+  FindParameter('debuglog','(3=yes) informacje o uruchamianiu i przebiegu dziaÅ‚ania symulacji: +1 - do pliku log.txt, +2 - wyÅ›wietlanie w oknie, +4 - nazwy torÃ³w');
+  FindParameter('multiplelogs','(no) zapisywanie logÃ³w do katalogu /logs/ bez nadpisywania po kaÅ¼dym uruchomieniu symulacji');
+  FindParameter('input.gamepad','(yes) no: ignorowanie sygnaÅ‚u z gamepada, przydatne dla uÅ¼ytkownikÃ³w PoKeys');
+  FindParameter('mousescale','(3.2 0.5) czuÅ‚oÅ›Ä‡ myszy, moÅ¼na dawaÄ‡ ujemne dla odwrÃ³cenia kierunku');
+  FindParameter('feedbackmode','(1) 0 - wyÅ‚Ä…czone, 1 - zaÅ‚Ä…czone sterowanie diodami klawiatury (Caps Lock - CA/SHP, Scroll Lock - jazda na oporach rozruchowych), 2 - (Caps - CA, Scroll -SHP), 3 - LPT, 4 - PoKeys55, 5 - COM');
+  FindParameter('feedbackport','adres (dziesiÄ™tnie) bazowy portu LPT dla feedbackmode 3 (zapalanie kontrolek wyjÅ›ciami LPT)');
+  FindParameter('friction','(1.0) mnoÅ¼nik dla wspÃ³Å‚czynnika tarcia');
+  FindParameter('fieldofview','(45) 15-75 kÄ…t widzenia kamery w pionie');
+  FindParameter('sound.volume','globalna gÅ‚oÅ›noÅ›Ä‡ dÅºwiÄ™kÃ³w');
   FindParameter('sound.volume.vehicle','wzgledna glosnosc dzwiekow wydawanych przez pojazdy, gdzie X jest mnoznikiem w przedziale 0-1');
   FindParameter('sound.volume.positional','wzgledna glosnosc pozycjonowanych dzwiekow emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
   FindParameter('sound.volume.ambient','wzgledna glosnosc dzwiekow globalnych (o ujemnym zakresie) emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
   FindParameter('sound.volume.paused','stopien wyciszenia dzwieku przy zalaczonej pauzie');
-  FindParameter('maxtexturesize','(16384) skalowanie zbyt du¿ych tekstur do podanego rozmiaru');
-  FindParameter('multisampling','(2) wyg³adzanie krawêdzi (poprawia obraz, ale obni¿a FPS): 0 - wy³aczone, 1 - dwukrotne, 2 - czterokrotne, 3 - oœmiokrotne');
-  FindParameter('convertmodels','(135) tworzenie plików modeli binarnych E3D z T3D: 0 - wy³¹czone, +1 - nowe Opacity, +2 - z optymalizacj¹, +4 - z bananami, +128 - rozszerzony pod exe C++, niekompatybilny ze starymi');
-  FindParameter('anisotropicfiltering','(8) 1-16 jakoœæ filtrowania anizotropowego tekstur');
-  FindParameter('pyscreenrendererpriority','(normal, lower, lowest, idle) priorytet w¹tku pythonowego renderera. Odci¹¿a procesor zmniejszaj¹c odœwie¿anie ekranów w lokomotywach.');
-  FindParameter('splinefidelity','(1) 1-4 dodatkowy podzia³ trajektorii na ³ukach, zwiêkszaj¹cy kr¹g³oœæ');
-  FindParameter('lang','(pl) jêzyk dla napisów');
+  FindParameter('maxtexturesize','(16384) skalowanie zbyt duÅ¼ych tekstur do podanego rozmiaru');
+  FindParameter('multisampling','(2) wygÅ‚adzanie krawÄ™dzi (poprawia obraz, ale obniÅ¼a FPS): 0 - wyÅ‚aczone, 1 - dwukrotne, 2 - czterokrotne, 3 - oÅ›miokrotne');
+  FindParameter('convertmodels','(135) tworzenie plikÃ³w modeli binarnych E3D z T3D: 0 - wyÅ‚Ä…czone, +1 - nowe Opacity, +2 - z optymalizacjÄ…, +4 - z bananami, +128 - rozszerzony pod exe C++, niekompatybilny ze starymi');
+  FindParameter('anisotropicfiltering','(8) 1-16 jakoÅ›Ä‡ filtrowania anizotropowego tekstur');
+  FindParameter('pyscreenrendererpriority','(normal, lower, lowest, idle) priorytet wÄ…tku pythonowego renderera. OdciÄ…Å¼a procesor zmniejszajÄ…c odÅ›wieÅ¼anie ekranÃ³w w lokomotywach.');
+  FindParameter('splinefidelity','(1) 1-4 dodatkowy podziaÅ‚ trajektorii na Å‚ukach, zwiÄ™kszajÄ…cy krÄ…gÅ‚oÅ›Ä‡');
+  FindParameter('lang','(pl) jÄ™zyk dla napisÃ³w');
   FindParameter('python.threadedupload','(yes) wysylanie wygenerowanych obrazow ekranow przy uzyciu osobnego watku');
   FindParameter('python.enabled','(domyslnie yes) wylacza w ogole generowanie tekstur przy uzyciu pythona');
   FindParameter('gfx.skiprendering','(domyslnie no) wylacza w ogole wizualizacje symulacji, pozostawiajac jedynie ui');
-  FindParameter('crashdamage','(domyslnie yes) w³¹cza uszkodzenia sprzêgów i wykolejenia od zderzeñ');
+  FindParameter('crashdamage','(domyslnie yes) wÅ‚Ä…cza uszkodzenia sprzÄ™gÃ³w i wykolejenia od zderzeÅ„');
   FindParameter('gfx.postfx.chromaticaberration.enabled','(domyslnie no) Efekt aberracji chromatycznej');
-  FindParameter('compresstex','(yes) ¿¹da od sterownika kompresji ³adowanych tekstur tga');
+  FindParameter('compresstex','(yes) Å¼Ä…da od sterownika kompresji Å‚adowanych tekstur tga');
   FindParameter('gfx.reflections.fidelity','(0) malowanie odbic. 1: +modele stat. 2:+modele stat. i pojazdy');
   FindParameter('python.mipmaps','(yes) Tworzenie mipmap dla tekstur generowanych skryptami pythona');
   FindParameter('gfx.usegles','');
@@ -1113,7 +1121,7 @@ begin
   FindParameter('gfx.drawrange.factor.max','');
   FindParameter('gfx.shadow.rank.cutoff','');
   FindParameter('gfx.shadow.angle.min','');
-  FindParameter('brakestep','prêdkoœæ przesuwania zaworu hamulca');
+  FindParameter('brakestep','prÄ™dkoÅ›Ä‡ przesuwania zaworu hamulca');
 
   if Main.cbMaxcabtexturesize.ItemIndex > 0 then
     FindParameter('maxcabtexturesize','skalowanie tekstur kabiny do podanego rozmiaru')
@@ -1131,7 +1139,7 @@ begin
     RemoveParam('fpslimit');
 
   if frmSettingsAdv.seThreads.Value > 0 then
-    FindParameter('async.trainThreads','(0) Iloœæ w¹tków liczenia fizyki pojazdów (0 = w g³ównym w¹tku)')
+    FindParameter('async.trainThreads','(0) IloÅ›Ä‡ wÄ…tkÃ³w liczenia fizyki pojazdÃ³w (0 = w gÅ‚Ã³wnym wÄ…tku)')
   else
     RemoveParam('async.trainThreads');
 
@@ -1404,7 +1412,12 @@ begin
     else
     if Params[i].Name = 'gfx.reflections.fidelity' then Params[i].Value := IntToStr(Main.cbReflectionsFidelity.ItemIndex) else
     if Params[i].Name = 'splinefidelity' then Params[i].Value := IntToStr(Main.cbSplinefidelity.ItemIndex+1) else
-    if Params[i].Name = 'lang' then Params[i].Value := LowerCase(Main.cbLang.Text) else
+    if Params[i].Name = 'lang' then 
+    begin
+      // Directly use current language option, no longer specially convert ZH to en
+      Params[i].Value := LowerCase(Main.cbLang.Text);
+    end
+    else
     if Params[i].Name = 'gfx.framebuffer.fidelity' then Params[i].Value := IntToStr(Main.cbBuffer.ItemIndex+1);
 
     if Pos('//',Params[i].Desc) > 0 then

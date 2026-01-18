@@ -196,7 +196,7 @@ begin
    Result := SI.dwNumberOfProcessors;
   except
     Result := 0;
-    Util.Log.Add('Nieudane pobranie dostêpnej iloœci w¹tków komputera.');
+    Util.Log.Add('Nieudane pobranie dostÄ™pnej iloÅ›ci wÄ…tkÃ³w komputera.');
   end;
 end;
 

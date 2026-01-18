@@ -117,7 +117,7 @@ begin
     end;
   except
     on E: Exception do
-        Util.Log.Add('B³¹d wczytywania regu³ (starter\reguly.txt). Szczegó³y b³êdu: ' + E.Message);
+        Util.Log.Add('BÅ‚Ä…d wczytywania reguÅ‚ (starter\reguly.txt). SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
@@ -200,7 +200,7 @@ begin
     ShowMessage(s);}
   except
     on E: Exception do
-        Util.Log.Add('B³¹d wyszukiwania tekstur. Szczegó³y b³êdu: ' + E.Message);
+        Util.Log.Add('BÅ‚Ä…d wyszukiwania tekstur. SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
@@ -394,7 +394,7 @@ begin
     end;
   except
     on E: Exception do
-        Util.Log.Add('B³¹d edycji pojazdu. Szczegó³y b³êdu: ' + E.Message);
+        Util.Log.Add('BÅ‚Ä…d edycji pojazdu. SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
