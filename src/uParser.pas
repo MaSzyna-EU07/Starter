@@ -129,7 +129,7 @@ begin
     FindClose(SR);
   except
     on E: Exception do
-      Util.LogAdd('B³¹d wczytywania taboru. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('BÅ‚Ä…d wczytywania taboru. SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
@@ -150,7 +150,7 @@ begin
 
     FindClose(SR);
   except
-    Util.LogAdd('B³¹d wczytywania scenerii ' + SR.Name);
+    Util.LogAdd('BÅ‚Ä…d wczytywania scenerii ' + SR.Name);
   end;
 end;
 
@@ -225,7 +225,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# BÅ‚Ä…d parsowania skÅ‚adu. SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
@@ -279,7 +279,8 @@ begin
   try
     if FileExists(Util.Dir + 'data\load_weights.txt') then
     begin
-      LoadWeights.LoadFromFile(Util.Dir + 'data\load_weights.txt');
+      // Load file using Windows-1250 encoding
+      LoadWeights.LoadFromFile(Util.Dir + 'data\load_weights.txt', TEncoding.GetEncoding(1250));
 
       Lexer.Origin := PChar(LoadWeights.Text);
 
@@ -299,7 +300,7 @@ begin
       end;
     end;
   except
-    Util.LogAdd('B³¹d wczytywania wag jednostek ³adunków.');
+    Util.LogAdd('BÅ‚Ä…d wczytywania wag jednostek Å‚adunkÃ³w.');
     LoadWeights.Free;
   end;
 end;
@@ -333,8 +334,8 @@ begin
     Lexer.NextID(ptIdentifier);
 
     if not SameText('dynamic', Lexer.Token) then
-      Util.LogAdd('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name +
-        ', wyra¿enie ' + Lexer.Token);
+      Util.LogAdd('BÅ‚Ä…d skÅ‚adniowy wpisu pojazdu ' + Result.Name +
+        ', wyraÅ¼enie ' + Lexer.Token);
 
     Lexer.NextNoJunk;
     Result.Dir := GetToken;
@@ -395,21 +396,21 @@ begin
     FindTexture(Result);
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania wpisu pojazdu ' + Result.Name +
-        ' . Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# BÅ‚Ä…d parsowania wpisu pojazdu ' + Result.Name +
+        ' . SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
 procedure TLexParser.StrToIntTry(const S: string; out Value: Integer);
 begin
   if not TryStrToInt(S, Value) then
-    Util.Log.Add('B³¹d podczas parsowania wyra¿enia ' + S + ' (str->int))');
+    Util.Log.Add('BÅ‚Ä…d podczas parsowania wyraÅ¼enia ' + S + ' (str->int))');
 end;
 
 procedure TLexParser.StrToFloatTry(const S: string; out Value: Double);
 begin
   if not TryStrToFloat(S, Value) then
-    Util.Log.Add('B³¹d podczas parsowania wyra¿enia ' + S + ' (str->single))');
+    Util.Log.Add('BÅ‚Ä…d podczas parsowania wyraÅ¼enia ' + S + ' (str->single))');
 end;
 
 function TLexParser.GetBrakeValue(const Settings: string; Pos: Integer): string;
@@ -501,8 +502,8 @@ begin
 
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania wpisu pojazdu ' + Vehicle.Name +
-        ' . Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# BÅ‚Ä…d parsowania wpisu pojazdu ' + Vehicle.Name +
+        ' . SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
@@ -551,7 +552,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania sekcji config. Szczegó³y b³êdu: ' +
+      Util.LogAdd('# BÅ‚Ä…d parsowania sekcji config. SzczegÃ³Å‚y bÅ‚Ä™du: ' +
         E.Message);
   end;
 end;
@@ -690,7 +691,7 @@ begin
       Config.Overcast := StrToFloat(GetToken);
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania wpisu atmo. Szczegó³y b³êdu: ' +
+      Util.LogAdd('# BÅ‚Ä…d parsowania wpisu atmo. SzczegÃ³Å‚y bÅ‚Ä™du: ' +
         E.Message);
   end;
 end;
@@ -706,7 +707,8 @@ begin
   Result.Name := Copy(Result.Name, 0, Result.Name.Length - 4);
 
   Plik := TSList.Create;
-  Plik.LoadFromFile(Path);
+  // Load file using Windows-1250 encoding
+  Plik.LoadFromFile(Path, TEncoding.GetEncoding(1250));
 
   Lexer.Origin := PChar(Plik.Text);
 
@@ -770,7 +772,8 @@ begin
     try
       try
         Plik := TSList.Create;
-        Plik.LoadFromFile(SCN.Path);
+        // Load file using Windows-1250 encoding
+        Plik.LoadFromFile(SCN.Path, TEncoding.GetEncoding(1250));
 
         FirstInitPos := Pos('FirstInit', Plik.Text);
         SCN.Other.Text := Copy(Plik.Text, 0, FirstInitPos - 1);
@@ -837,8 +840,9 @@ begin
                   if FileExists(Util.Dir + 'scenery\' + IncludeStr) then
                   begin
                     IncFirstInit := TSList.Create;
+                    // Load included file using Windows-1250 encoding
                     IncFirstInit.LoadFromFile(Util.Dir + 'scenery\' +
-                      IncludeStr);
+                      IncludeStr, TEncoding.GetEncoding(1250));
 
                     FirstInit.Add(IncFirstInit.Text);
                     IncFirstInit.Free;
@@ -879,8 +883,8 @@ begin
       except
         on E: Exception do
         begin
-          S := '# B³¹d parsowania ' + SCN.Path + ', linia: ' +
-            IntToStr(Lexer.LineNumber) + ' Szczegó³y b³êdu: ' + E.Message;
+          S := '# BÅ‚Ä…d parsowania ' + SCN.Path + ', linia: ' +
+            IntToStr(Lexer.LineNumber) + ' SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message;
           Util.LogAdd(S);
         end;
       end;
@@ -930,7 +934,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd('# BÅ‚Ä…d parsowania skÅ‚adu. SzczegÃ³Å‚y bÅ‚Ä™du: ' + E.Message);
   end;
 end;
 
@@ -971,7 +975,7 @@ begin
       Tex.Models.Add(Model);
     end;
   except
-    Util.LogAdd('B³¹d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik +
+    Util.LogAdd('BÅ‚Ä…d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik +
       ', linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;
@@ -988,7 +992,8 @@ var
 begin
   try
     Plik := TSList.Create;
-    Plik.LoadFromFile(Path);
+    // Load file using Windows-1250 encoding
+    Plik.LoadFromFile(Path, TEncoding.GetEncoding(1250));
 
     BaseDir := ExtractFileDir(Copy(Path, Pos('dynamic', Path) + 8,
       Length(Path)));
@@ -1108,7 +1113,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('B³¹d parsowania ' + Path + ', szczegó³y b³êdu: ' +
+      Util.LogAdd('BÅ‚Ä…d parsowania ' + Path + ', szczegÃ³Å‚y bÅ‚Ä™du: ' +
         E.Message);
   end;
 end;
@@ -1133,7 +1138,7 @@ begin
       Tex.Author := Par[6];
       Tex.Photos := Par[7];
     except
-      Util.LogAdd('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
+      Util.LogAdd('BÅ‚Ä…d przetwarzania opisu tekstury: ' + Tex.Desc);
     end;
   finally
     Par.Free;
@@ -1176,17 +1181,20 @@ begin
     PhysicsFile := TStringList.Create;
 
     if IsParameter('utf8') then
-      PhysicsFile.DefaultEncoding := TEncoding.UTF8;
+      PhysicsFile.DefaultEncoding := TEncoding.UTF8
+    else
+      // Use Windows-1250 encoding by default
+      PhysicsFile.DefaultEncoding := TEncoding.GetEncoding(1250);
 
     if Path.Length = 0 then
     begin
       if FileExists(BasePath + Physics.Name + '.fiz') then
-        PhysicsFile.LoadFromFile(BasePath + Physics.Name + '.fiz')
+        PhysicsFile.LoadFromFile(BasePath + Physics.Name + '.fiz', TEncoding.GetEncoding(1250))
       else if FileExists(BasePath + Physics.Name + 'dumb.fiz') then
-        PhysicsFile.LoadFromFile(BasePath + Physics.Name + 'dumb.fiz');
+        PhysicsFile.LoadFromFile(BasePath + Physics.Name + 'dumb.fiz', TEncoding.GetEncoding(1250));
     end
     else if FileExists(BasePath + Path) then
-      PhysicsFile.LoadFromFile(BasePath + Path);
+      PhysicsFile.LoadFromFile(BasePath + Path, TEncoding.GetEncoding(1250));
 
     Section := psOther;
     Lexer.Origin := PChar(PhysicsFile.Text);
@@ -1315,7 +1323,7 @@ begin
 
     Params.Free;
   except
-    Util.LogAdd('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name +
+    Util.LogAdd('BÅ‚Ä…d parsowania ' + Physics.Dir + '\' + Physics.Name +
       '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
   end;
 end;

@@ -645,7 +645,7 @@ type
     SelVehicle: Integer;
 
     procedure OpenAttachment(Sender: TObject);
-    /// <summary>Maluje na nowo podgl¹d graficzny sk³adu wraz z wyœwietlanymi parametrami zachowuj¹c zaznaczenie.</summary>
+    /// <summary>Maluje na nowo podglï¿½d graficzny skï¿½adu wraz z wyï¿½wietlanymi parametrami zachowujï¿½c zaznaczenie.</summary>
     procedure DrawTrain(const Train: TTrain);
     procedure LaunchSimulator(const SaveSettings: Boolean = True);
     procedure SelectVehicle(const Sender: TObject;
@@ -692,7 +692,7 @@ type
     procedure AssignBrakeActing(Vehicle: TVehicle);
     procedure AssignBrakeAdjust(Vehicle: TVehicle);
     procedure AssignBrakeState(Vehicle: TVehicle);
-    /// <summary>Prze³adowuje opis wybranego sk³adu.</summary>
+    /// <summary>Przeï¿½adowuje opis wybranego skï¿½adu.</summary>
     procedure TrainDesc;
     procedure NoSelection;
     procedure LoadScenery(const aSCN: TScenario);
@@ -715,7 +715,7 @@ type
     procedure FaultList(const Scenery: TScenario);
     procedure ReplaceVehicle(const Tex: TTexture; const Index: Integer);
     function FirstCarIndex(const Index: Integer): Integer;
-    /// <summary>Ustawia najwy¿sze mo¿liwe flagi sprzêgów w wybranym sk³adzie.</summary>
+    /// <summary>Ustawia najwyï¿½sze moï¿½liwe flagi sprzï¿½gï¿½w w wybranym skï¿½adzie.</summary>
     procedure AutoCoupler;
     procedure RandomReverse;
     procedure RandomOrder;
@@ -773,8 +773,8 @@ var
 begin
   DepoTrain := TTrain.Create;
   DepoTrain.TrainName := InputBox(Util.LabelStr(LAB_TRAIN_NAME)
-    { 'Nazwa poci¹gu' } , Util.LabelStr(LAB_TRAIN_NAME) +
-    ':' { 'Nazwa poci¹gu:' } , Train.TrainName);
+    { 'Nazwa pociï¿½gu' } , Util.LabelStr(LAB_TRAIN_NAME) +
+    ':' { 'Nazwa pociï¿½gu:' } , Train.TrainName);
 
   for i := 0 to Train.Vehicles.Count - 1 do
   begin
@@ -1069,7 +1069,7 @@ var
   TrainName: string;
 begin
   TrainName := InputBox(Util.LabelStr(LAB_TRAIN_NAME_CHANGE)
-    { 'Zmiana nazwy poci¹gu' } , Util.LabelStr(LAB_TRAIN_NAME) + ':',
+    { 'Zmiana nazwy pociï¿½gu' } , Util.LabelStr(LAB_TRAIN_NAME) + ':',
     Data.Depot[lbDepot.ItemIndex].TrainName);
 
   if TrainName.Length > 0 then
@@ -1409,8 +1409,8 @@ var
 begin
   FileName := 'moje_ustawienia';
 
-  if InputQuery(Util.LabelStr(LAB_SAVE_PRESET) { 'Zapis presetu ustawieñ' } ,
-    Util.LabelStr(LAB_SET_PRESET_NAME) { 'Nadaj nazwê zestawu ustawieñ:' } ,
+  if InputQuery(Util.LabelStr(LAB_SAVE_PRESET) { 'Zapis presetu ustawieï¿½' } ,
+    Util.LabelStr(LAB_SET_PRESET_NAME) { 'Nadaj nazwï¿½ zestawu ustawieï¿½:' } ,
     FileName) then
     if Trim(FileName).Length > 0 then
     begin
@@ -2061,12 +2061,12 @@ begin
   if cbGfxrenderer.ItemIndex = 4 then
   begin
     dlg := CreateMessageDialog
-      ('Renderer eksperymentalny jako testowy mo¿e nie dzia³aæ stabilnie na wszystkich komputerach!'#13#10
-      + 'Zespó³ developerów nie przyjmuje zg³oszeñ zwi¹zanych z nieprawid³owym dzia³aniem tego trybu.'#13#10#13#10
-      + 'Czy wyra¿asz zgodê na prze³¹czenie z powrotem w tryb pe³ny (stabilny)?',
+      ('Renderer eksperymentalny jako testowy moï¿½e nie dziaï¿½aï¿½ stabilnie na wszystkich komputerach!'#13#10
+      + 'Zespï¿½ developerï¿½w nie przyjmuje zgï¿½oszeï¿½ zwiï¿½zanych z nieprawidï¿½owym dziaï¿½aniem tego trybu.'#13#10#13#10
+      + 'Czy wyraï¿½asz zgodï¿½ na przeï¿½ï¿½czenie z powrotem w tryb peï¿½ny (stabilny)?',
       mtWarning, [mbYes, mbNo]);
     try
-      dlg.Caption := 'Ostrze¿enie';
+      dlg.Caption := 'Ostrzeï¿½enie';
       res := dlg.ShowModal;
       if res = mrYes then
         cbGfxrenderer.ItemIndex := 0;
@@ -2075,7 +2075,7 @@ begin
     end;
   end;
   // ShowMessage
-  // ('Renderer eksperymentalny jako testowy mo¿e nie dzia³aæ stabilnie na wszystkich komputerach.');
+  // ('Renderer eksperymentalny jako testowy moï¿½e nie dziaï¿½aï¿½ stabilnie na wszystkich komputerach.');
 end;
 
 procedure TMain.cbHDRChange(Sender: TObject);
@@ -2171,6 +2171,9 @@ procedure TMain.cbLangChange(Sender: TObject);
 var
   Param: TParam;
   i: Integer;
+  StarterINI: TStringList;
+  j: Integer;
+  Line: string;
 begin
   i := cbTypes.ItemIndex;
   Param := Settings.FindParam('lang');
@@ -2178,11 +2181,41 @@ begin
   if (Param <> nil) and (not SameText(Param.Value, cbLang.Text)) then
   begin
     Settings.SaveSettings;
+    
+    // Update language setting in starter.ini simultaneously
+    StarterINI := TStringList.Create;
+    try
+      if FileExists(Util.DIR + 'starter\starter.ini') then
+        StarterINI.LoadFromFile(Util.DIR + 'starter\starter.ini');
+        
+      // Find and replace lang line
+      for j := 0 to StarterINI.Count - 1 do
+      begin
+        Line := StarterINI[j];
+        if AnsiStartsStr('lang=', Line) then
+        begin
+          StarterINI[j] := 'lang=' + cbLang.Text;
+          Break;
+        end;
+      end;
+      
+      // If no lang line is found, add a line
+      if j = StarterINI.Count then
+        StarterINI.Add('lang=' + cbLang.Text);
+        
+      StarterINI.SaveToFile(Util.DIR + 'starter\starter.ini');
+    finally
+      StarterINI.Free;
+    end;
+    
     Settings.ReadOwnSettings;
     Settings.ReadSettings;
   end;
 
   cbTypes.ItemIndex := i;
+  
+  // Force redraw language selection box to prevent incorrect flag display
+  cbLang.Invalidate;
 end;
 
 procedure TMain.cbLangDrawItem(Control: TWinControl; Index: Integer;
@@ -2191,6 +2224,7 @@ var
   ComboBox: TComboBox;
   ItemWidth: Integer;
   Bitmap: TBitmap;
+  ResourceName: string;
 begin
   ComboBox := (Control as TComboBox);
   try
@@ -2200,10 +2234,23 @@ begin
 
       ItemWidth := (ComboBox.Width - GetSystemMetrics(SM_CYHSCROLL)) shr 1;
 
+      ResourceName := ComboBox.Items[Index];
       Bitmap := TBitmap.Create;
       try
-        Bitmap.LoadFromResourceName(HInstance, ComboBox.Items[Index]);
-        Draw(ItemWidth - (Bitmap.Width shr 1), Rect.Top, Bitmap);
+        // Try to load resource, if fails use default image or skip drawing
+        if ResourceName <> '' then
+        begin
+          try
+            Bitmap.LoadFromResourceName(HInstance, ResourceName);
+            Draw(ItemWidth - (Bitmap.Width shr 1), Rect.Top, Bitmap);
+          except
+            on E: Exception do
+            begin
+              // Log error but don't interrupt program execution
+              Util.LogAdd('Failed to load resource: ' + ResourceName + ' Error: ' + E.Message);
+            end;
+          end;
+        end;
       finally
         Bitmap.Free;
       end;
@@ -2462,7 +2509,7 @@ begin
       Train.Vehicles[SelVehicle].Coupler := CouplerOld;
       SelectCoupler(CouplerOld);
       ShowMessage(Util.LabelStr(LAB_WRONG_CONNECTION)
-      { 'Niedopuszczalny rodzaj po³¹czenia miêdzy tymi pojazdami.' } );
+      { 'Niedopuszczalny rodzaj poï¿½ï¿½czenia miï¿½dzy tymi pojazdami.' } );
     end;
   end
   else
@@ -2562,7 +2609,7 @@ end;
 
 procedure TMain.ConfigChange(Sender: TObject);
 begin
-  lbTemperature.Caption := IntToStr(tbTemperature.Position) + '°C';
+  lbTemperature.Caption := IntToStr(tbTemperature.Position) + 'ï¿½C';
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
@@ -2771,6 +2818,8 @@ begin
 end;
 
 procedure TMain.FormShow(Sender: TObject);
+var
+  i: Integer;
 begin
   TfrmStart.GetInstance.UpdateLabel(Util.LabelStr(LAB_LOAD_SETTINGS));
   TDepotThread.Create;
@@ -2793,6 +2842,16 @@ begin
 
   Util.CheckInstallation(cbEXE.Items.Count);
   Util.StartApp := Now;
+
+  // Select correct language options according to current language setting
+  for i := 0 to cbLang.Items.Count - 1 do
+  begin
+    if SameText(ExtractFileName(cbLang.Items[i]), 'lang-' + Util.Lang + '.txt') then
+    begin
+      cbLang.ItemIndex := i;
+      Break;
+    end;
+  end;
 
   TfrmStart.GetInstance.Free;
 end;
@@ -3284,11 +3343,17 @@ begin
 
     if (Train.TimeTable.Length > 0) and
       (FileExists(Util.Dir + 'scenery\' + Train.TimeTable + '.txt')) then
+    begin
+      // Load file using Windows-1250 encoding
       meTimetable.Lines.LoadFromFile(Util.Dir + 'scenery\' +
-        Train.TimeTable + '.txt')
+        Train.TimeTable + '.txt', TEncoding.GetEncoding(1250));
+    end
     else if FileExists(Util.Dir + 'scenery\' + Train.TrainName + '.txt') then
+    begin
+      // Load file using Windows-1250 encoding
       meTimetable.Lines.LoadFromFile(Util.Dir + 'scenery\' + Train.TrainName
-        + '.txt');
+        + '.txt', TEncoding.GetEncoding(1250));
+    end;
 
     meTimetable.Lines.EndUpdate;
 

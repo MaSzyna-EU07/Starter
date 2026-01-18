@@ -202,7 +202,7 @@ end;
 procedure TfrmRules.actAddExecute(Sender: TObject);
 begin
   if NameIsInRule(lbRules.ItemIndex,cbModels.Text) then
-    ShowMessage('Taki pojazd jest ju¿ w tej regule.')
+    ShowMessage('Taki pojazd jest juÅ¼ w tej regule.')
   else
     RuleAddElement(lbRules.ItemIndex,cbModels.Text);
 end;
@@ -293,7 +293,7 @@ end;
 
 procedure TfrmRules.actButtonClickExecute(Sender: TObject);
 begin
-  if Util.Ask('Usun¹æ wybrany element regu³y?'{Util.LabelStr(CAP_SET_CHANGED)}) then
+  if Util.Ask('UsunÄ…Ä‡ wybrany element reguÅ‚y?'{Util.LabelStr(CAP_SET_CHANGED)}) then
   begin
     RuleElement := ((Sender as TAction).ActionComponent as TButton).Caption;
     Timer.Enabled := True;
@@ -320,7 +320,7 @@ end;
 
 procedure TfrmRules.actSaveExecute(Sender: TObject);
 begin
-  if Util.Ask('Zapisaæ ustalone regu³y?'{Util.LabelStr(CAP_SET_CHANGED)}) then
+  if Util.Ask('ZapisaÄ‡ ustalone reguÅ‚y?'{Util.LabelStr(CAP_SET_CHANGED)}) then
     SaveRules;
 end;
 
