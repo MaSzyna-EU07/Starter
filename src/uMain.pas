@@ -645,7 +645,7 @@ type
     SelVehicle: Integer;
 
     procedure OpenAttachment(Sender: TObject);
-    /// <summary>Maluje na nowo podgl�d graficzny sk�adu wraz z wy�wietlanymi parametrami zachowuj�c zaznaczenie.</summary>
+    /// <summary>Maluje na nowo podgląd graficzny składu wraz z wyświetlanymi parametrami zachowując zaznaczenie.</summary>
     procedure DrawTrain(const Train: TTrain);
     procedure LaunchSimulator(const SaveSettings: Boolean = True);
     procedure SelectVehicle(const Sender: TObject;
@@ -692,7 +692,7 @@ type
     procedure AssignBrakeActing(Vehicle: TVehicle);
     procedure AssignBrakeAdjust(Vehicle: TVehicle);
     procedure AssignBrakeState(Vehicle: TVehicle);
-    /// <summary>Prze�adowuje opis wybranego sk�adu.</summary>
+    /// <summary>Przeładowuje opis wybranego składu.</summary>
     procedure TrainDesc;
     procedure NoSelection;
     procedure LoadScenery(const aSCN: TScenario);
@@ -715,7 +715,7 @@ type
     procedure FaultList(const Scenery: TScenario);
     procedure ReplaceVehicle(const Tex: TTexture; const Index: Integer);
     function FirstCarIndex(const Index: Integer): Integer;
-    /// <summary>Ustawia najwy�sze mo�liwe flagi sprz�g�w w wybranym sk�adzie.</summary>
+    /// <summary>Ustawia najwyższe możliwe flagi sprzęgów w wybranym składzie.</summary>
     procedure AutoCoupler;
     procedure RandomReverse;
     procedure RandomOrder;
@@ -773,8 +773,8 @@ var
 begin
   DepoTrain := TTrain.Create;
   DepoTrain.TrainName := InputBox(Util.LabelStr(LAB_TRAIN_NAME)
-    { 'Nazwa poci�gu' } , Util.LabelStr(LAB_TRAIN_NAME) +
-    ':' { 'Nazwa poci�gu:' } , Train.TrainName);
+    { 'Nazwa pociągu' } , Util.LabelStr(LAB_TRAIN_NAME) +
+    ':' { 'Nazwa pociągu:' } , Train.TrainName);
 
   for i := 0 to Train.Vehicles.Count - 1 do
   begin
@@ -1069,7 +1069,7 @@ var
   TrainName: string;
 begin
   TrainName := InputBox(Util.LabelStr(LAB_TRAIN_NAME_CHANGE)
-    { 'Zmiana nazwy poci�gu' } , Util.LabelStr(LAB_TRAIN_NAME) + ':',
+    { 'Zmiana nazwy pociągu' } , Util.LabelStr(LAB_TRAIN_NAME) + ':',
     Data.Depot[lbDepot.ItemIndex].TrainName);
 
   if TrainName.Length > 0 then
@@ -1409,8 +1409,8 @@ var
 begin
   FileName := 'moje_ustawienia';
 
-  if InputQuery(Util.LabelStr(LAB_SAVE_PRESET) { 'Zapis presetu ustawie�' } ,
-    Util.LabelStr(LAB_SET_PRESET_NAME) { 'Nadaj nazw� zestawu ustawie�:' } ,
+  if InputQuery(Util.LabelStr(LAB_SAVE_PRESET) { 'Zapis presetu ustawień' } ,
+    Util.LabelStr(LAB_SET_PRESET_NAME) { 'Nadaj nazwę zestawu ustawień:' } ,
     FileName) then
     if Trim(FileName).Length > 0 then
     begin
@@ -2061,12 +2061,12 @@ begin
   if cbGfxrenderer.ItemIndex = 4 then
   begin
     dlg := CreateMessageDialog
-      ('Renderer eksperymentalny jako testowy mo�e nie dzia�a� stabilnie na wszystkich komputerach!'#13#10
-      + 'Zesp� developer�w nie przyjmuje zg�osze� zwi�zanych z nieprawid�owym dzia�aniem tego trybu.'#13#10#13#10
-      + 'Czy wyra�asz zgod� na prze��czenie z powrotem w tryb pe�ny (stabilny)?',
+      ('Renderer eksperymentalny jako testowy może nie działać stabilnie na wszystkich komputerach!'#13#10
+      + 'Zespół developerów nie przyjmuje zgłoszeń związanych z nieprawidłowym działaniem tego trybu.'#13#10#13#10
+      + 'Czy wyrażasz zgodę na przełączenie z powrotem w tryb pełny (stabilny)?',
       mtWarning, [mbYes, mbNo]);
     try
-      dlg.Caption := 'Ostrze�enie';
+      dlg.Caption := 'Ostrzeżenie';
       res := dlg.ShowModal;
       if res = mrYes then
         cbGfxrenderer.ItemIndex := 0;
@@ -2075,7 +2075,7 @@ begin
     end;
   end;
   // ShowMessage
-  // ('Renderer eksperymentalny jako testowy mo�e nie dzia�a� stabilnie na wszystkich komputerach.');
+  // ('Renderer eksperymentalny jako testowy może nie działać stabilnie na wszystkich komputerach.');
 end;
 
 procedure TMain.cbHDRChange(Sender: TObject);
@@ -2509,7 +2509,7 @@ begin
       Train.Vehicles[SelVehicle].Coupler := CouplerOld;
       SelectCoupler(CouplerOld);
       ShowMessage(Util.LabelStr(LAB_WRONG_CONNECTION)
-      { 'Niedopuszczalny rodzaj po��czenia mi�dzy tymi pojazdami.' } );
+      { 'Niedopuszczalny rodzaj połączenia między tymi pojazdami.' } );
     end;
   end
   else
@@ -2609,7 +2609,7 @@ end;
 
 procedure TMain.ConfigChange(Sender: TObject);
 begin
-  lbTemperature.Caption := IntToStr(tbTemperature.Position) + '�C';
+  lbTemperature.Caption := IntToStr(tbTemperature.Position) + '°C';
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
