@@ -21,36 +21,37 @@ unit uSettings;
 
 interface
 
-uses CastaliaPasLex, CastaliaPasLexTypes, System.Generics.Collections, System.Generics.Defaults, Classes;
+uses CastaliaPasLex, CastaliaPasLexTypes, System.Generics.Collections,
+  System.Generics.Defaults, Classes;
 
 type
   TParam = class
-    Name : string;
+    Name: string;
     Value: string;
-    Desc : string;
+    Desc: string;
   end;
 
   TKeyParam = class
-    Name  : string;
-    Desc  : string;
-    Key   : string;
-    Key2  : string;
-    Key3  : string;
+    Name: string;
+    Desc: string;
+    Key: string;
+    Key2: string;
+    Key3: string;
   end;
 
   TFileAge = class
-    Name  : string;
-    Age   : TDateTime;
+    Name: string;
+    Age: TDateTime;
   end;
 
   TSettings = class
   private
-    DebugLogTrack     : Boolean;
-    DebugLogSpeed     : Boolean;
-    SettingsAge       : TDateTime;
-    //////////////////////////////
+    DebugLogTrack: Boolean;
+    DebugLogSpeed: Boolean;
+    SettingsAge: TDateTime;
+    /// ///////////////////////////
 
-    Lexer : TmwPasLex;
+    Lexer: TmwPasLex;
     function GetParamName: string;
     function GetParamValue: string;
     procedure SetCheckState(const State: Boolean; const ParamIndex: Integer);
@@ -58,34 +59,37 @@ type
     procedure SaveOwnSettings;
     procedure LoadEXE;
 
-    procedure AddParam(const Name: String;const Desc:string);
+    procedure AddParam(const Name: String; const Desc: string);
     procedure CheckParams;
     procedure RemoveParam(const Name: String);
-    function LoadIni(const FileName:string; out aFileAge:TDateTime):TStringList; overload;
+    function LoadIni(const FileName: string; out aFileAge: TDateTime)
+      : TStringList; overload;
     function LoadIni(const FileName: string): TStringList; overload;
-    function SaveIni(const FileName: string;const INIFile: TStringList): TDateTime;
+    function SaveIni(const FileName: string; const INIFile: TStringList)
+      : TDateTime;
     function eu07exeVersion: Integer;
   public
-    Params : TObjectList<TParam>;
-    KeyParams : TObjectList<TKeyParam>;
+    Params: TObjectList<TParam>;
+    KeyParams: TObjectList<TKeyParam>;
 
-    UART : string;
-    IgnoreIrrelevant  : Boolean;
-    UTF8 : Boolean;
+    UART: string;
+    IgnoreIrrelevant: Boolean;
+    UTF8: Boolean;
 
     procedure LoadPresets;
-    procedure ReadOwnSettings(const FirstRun:boolean=False);
-    procedure ReadSettings(const Path:string='');
+    procedure ReadOwnSettings(const FirstRun: Boolean = False);
+    procedure ReadSettings(const Path: string = '');
     procedure RendererExperimental;
     procedure ReadKeyboard;
-    procedure SaveSettings(const Path:string='eu07.ini'; const OnlyOwnSettings:Boolean=False);
+    procedure SaveSettings(const Path: string = 'eu07.ini';
+      const OnlyOwnSettings: Boolean = False);
     procedure SaveKeyboardSettings;
     constructor Create;
     destructor Destroy; override;
-    function FindKey(const Key:string):Integer;
+    function FindKey(const Key: string): Integer;
     function FindParam(const Name: string): TParam;
-    procedure FindParameter(const Name: string;const Desc:string='');
-    procedure ChangeHDR(const Reinhard:Boolean=True);
+    procedure FindParameter(const Name: string; const Desc: string = '');
+    procedure ChangeHDR(const Reinhard: Boolean = True);
     procedure CheckSettingsFile;
     function eu07exeSelected: string;
   end;
@@ -93,7 +97,7 @@ type
 implementation
 
 uses uMain, uSettingsAdv, WinTypes, uLanguages, SysUtils, Vcl.Forms,
-     Dialogs, DateUtils, uUpdater, uUtilities, StdCtrls;
+  Dialogs, DateUtils, uUpdater, uUtilities, StdCtrls;
 
 constructor TSettings.Create;
 begin
@@ -110,12 +114,12 @@ end;
 
 function TSettings.FindKey(const Key: string): Integer;
 var
-  i : Integer;
+  i: Integer;
 begin
   Result := -1;
-  for i := 0 to Main.cbKey.Items.Count-1 do
+  for i := 0 to Main.cbKey.Items.Count - 1 do
   begin
-    if CompareText(Key,Main.cbKey.Items[i]) = 0 then
+    if CompareText(Key, Main.cbKey.Items[i]) = 0 then
     begin
       Result := i;
       Break;
@@ -123,20 +127,20 @@ begin
   end;
 end;
 
-function TSettings.FindParam(const Name:string):TParam;
+function TSettings.FindParam(const Name: string): TParam;
 var
-  i : Integer;
+  i: Integer;
 begin
   Result := nil;
-  for i := 0 to Params.Count-1 do
-    if SameStr(Name,Params[i].Name) then
+  for i := 0 to Params.Count - 1 do
+    if SameStr(Name, Params[i].Name) then
     begin
       Result := Params[i];
       Break;
     end;
 end;
 
-function TSettings.GetParamName:string;
+function TSettings.GetParamName: string;
 begin
   Result := '';
   while not Lexer.IsSpace do
@@ -146,7 +150,7 @@ begin
   end;
 end;
 
-function TSettings.GetParamValue:string;
+function TSettings.GetParamValue: string;
 begin
   Result := '';
   while (Lexer.TokenID <> ptSlashesComment) and (Lexer.TokenID <> ptCRLF) do
@@ -168,23 +172,23 @@ end;
 
 procedure TSettings.LoadEXE;
 var
-  SR : TSearchRec;
-  Ilosc, i : Integer;
-  ExeAge : TFileAge;
-  ExeAges : TList<TFileAge>;
+  SR: TSearchRec;
+  Ilosc, i: Integer;
+  ExeAge: TFileAge;
+  ExeAges: TList<TFileAge>;
 begin
   ExeAges := TList<TFileAge>.Create;
 
   Main.cbEXE.Items.BeginUpdate;
   Main.cbEXE.Clear;
-  Ilosc := FindFirst(Util.DIR + 'eu07*.exe',faAnyFile,SR);
+  Ilosc := FindFirst(Util.DIR + 'eu07*.exe', faAnyFile, SR);
   while (Ilosc = 0) do
   begin
     if FileExists(Util.DIR + SR.Name) then
     begin
       ExeAge := TFileAge.Create;
       ExeAge.Name := SR.Name;
-      FileAge(Util.DIR + SR.Name,ExeAge.Age);
+      FileAge(Util.DIR + SR.Name, ExeAge.Age);
       ExeAges.Add(ExeAge);
     end;
 
@@ -193,16 +197,16 @@ begin
   System.SysUtils.FindClose(SR);
 
   ExeAges.Sort(TComparer<TFileAge>.Construct(
-          function (const L, R: TFileAge): Integer
-          begin
-            result := CompareFileAges(L, R);
-          end));
+    function(const L, R: TFileAge): Integer
+    begin
+      Result := CompareFileAges(L, R);
+    end));
 
-  for i := 0 to ExeAges.Count-1 do
+  for i := 0 to ExeAges.Count - 1 do
     Main.cbEXE.Items.Add(ExeAges[i].Name);
 
   if Main.cbEXE.Items.Count > 0 then
-    Main.cbEXE.Items.Insert(0,'Autom.');
+    Main.cbEXE.Items.Insert(0, 'Autom.');
 
   Main.cbEXE.Items.EndUpdate;
   ExeAges.Free;
@@ -212,8 +216,8 @@ procedure TSettings.ResolutionList;
 var
   DM: TDevMode;
   FindResolution: Bool;
-  i, y : Integer;
-  Resolution : string;
+  i, y: Integer;
+  Resolution: string;
 begin
   Main.cbResolution.Items.BeginUpdate;
 
@@ -227,7 +231,7 @@ begin
       Resolution := Format('%d x %d', [DM.dmPelsWidth, DM.dmPelsHeight]);
 
       FindResolution := False;
-      for y := 0 to Main.cbResolution.Items.Count-1 do
+      for y := 0 to Main.cbResolution.Items.Count - 1 do
         if Resolution = Main.cbResolution.Items[y] then
         begin
           FindResolution := True;
@@ -235,29 +239,30 @@ begin
         end;
 
       if not FindResolution then
-        Main.cbResolution.Items.Add(Format('%d x %d', [DM.dmPelsWidth, DM.dmPelsHeight]));
+        Main.cbResolution.Items.Add(Format('%d x %d', [DM.dmPelsWidth,
+          DM.dmPelsHeight]));
     end;
   end;
 
   Main.cbResolution.Items.EndUpdate;
 end;
 
-function TSettings.LoadIni(const FileName:string; out aFileAge:TDateTime):TStringList;
+function TSettings.LoadIni(const FileName: string; out aFileAge: TDateTime)
+  : TStringList;
 var
-  Path : string;
+  Path: string;
 begin
   Result := TStringList.Create;
 
   if FileExists(Util.INIDir + FileName) then
     Path := Util.INIDir + FileName
-  else
-    if FileExists(Util.DIR + FileName) then
-      Path := Util.DIR + FileName;
+  else if FileExists(Util.DIR + FileName) then
+    Path := Util.DIR + FileName;
 
   if not Path.IsEmpty then
   begin
     Result.LoadFromFile(Path);
-    FileAge(Path,aFileAge);
+    FileAge(Path, aFileAge);
   end
   else
   begin
@@ -266,55 +271,58 @@ begin
   end;
 
   if (FileName <> 'eu07_input-keyboard.ini') and
-     (FileName <> 'starter\starter.ini') then
+    (FileName <> 'starter\starter.ini') then
   begin
     Main.lbSettingsPath.Caption := Path;
-    Main.lbSettingsPath.Hint    := Path;
+    Main.lbSettingsPath.Hint := Path;
   end;
 end;
 
-function TSettings.LoadIni(const FileName:string):TStringList;
+function TSettings.LoadIni(const FileName: string): TStringList;
 var
-  D : TDateTime;
+  D: TDateTime;
 begin
-  Result := LoadIni(FileName,D);
+  Result := LoadIni(FileName, D);
 end;
 
-function TSettings.SaveIni(const FileName:string;const INIFile:TStringList):TDateTime;
+function TSettings.SaveIni(const FileName: string; const INIFile: TStringList)
+  : TDateTime;
 begin
-  if (eu07exeVersion > 2510) and (ForceDirectories(ExtractFilePath(Util.INIDir + FileName))) then
+  if (eu07exeVersion > 2510) and
+    (ForceDirectories(ExtractFilePath(Util.INIDir + FileName))) then
   begin
     INIFile.SaveToFile(Util.INIDir + FileName);
-    FileAge(Util.INIDir + FileName,Result);
+    FileAge(Util.INIDir + FileName, Result);
   end
   else
   begin
     INIFile.SaveToFile(Util.DIR + FileName);
-    FileAge(Util.DIR + FileName,Result);
+    FileAge(Util.DIR + FileName, Result);
   end;
 end;
 
 procedure TSettings.ReadKeyboard;
 var
-  Settings, Par : TStringList;
-  KeyParam : TKeyParam;
-  i : Integer;
+  Settings, Par: TStringList;
+  KeyParam: TKeyParam;
+  i: Integer;
 begin
   KeyParams.Free;
   KeyParams := TObjectList<TKeyParam>.Create();
 
   Settings := LoadIni('eu07_input-keyboard.ini');
 
-  for i := 0 to Settings.Count-1 do
+  for i := 0 to Settings.Count - 1 do
   begin
     Par := TStringList.Create;
-    ExtractStrings([' '],[],PChar(Copy(Settings[i],0,Pos('//',Settings[i])-1)),Par);
+    ExtractStrings([' '], [],
+      PChar(Copy(Settings[i], 0, Pos('//', Settings[i]) - 1)), Par);
 
     if Par.Count > 0 then
     begin
       KeyParam := TKeyParam.Create;
       KeyParam.Name := Par[0];
-      KeyParam.Desc := Copy(Settings[i],Pos('//',Settings[i])+3,70);
+      KeyParam.Desc := Copy(Settings[i], Pos('//', Settings[i]) + 3, 70);
 
       if Par.Count = 2 then
         KeyParam.Key := Par[1]
@@ -361,17 +369,17 @@ end;
 
 procedure TSettings.LoadPresets;
 var
-  SR : TSearchRec;
-  C : Integer;
+  SR: TSearchRec;
+  C: Integer;
 begin
   Main.cbPreset.Items.BeginUpdate;
   Main.cbPreset.Items.Clear;
 
-  C := FindFirst(Util.INIDir + 'starter\#*.ini',faDirectory,SR);
+  C := FindFirst(Util.INIDir + 'starter\#*.ini', faDirectory, SR);
   while (C = 0) do
   begin
     if (SR.Name <> '.') and (SR.Name <> '..') then
-      Main.cbPreset.Items.Add(Copy(SR.Name,2,Length(SR.Name)-5));
+      Main.cbPreset.Items.Add(Copy(SR.Name, 2, Length(SR.Name) - 5));
 
     C := FindNext(SR);
   end;
@@ -383,13 +391,13 @@ begin
     Main.cbPreset.ItemIndex := 0;
 end;
 
-procedure TSettings.ReadSettings(const Path:string='');
+procedure TSettings.ReadSettings(const Path: string = '');
 var
-  Token, ParWidth, ParHeight : string;
-  Settings, Par : TStringList;
-  Param : TParam;
-  i, ValInt : Integer;
-  Val : Double;
+  Token, ParWidth, ParHeight: string;
+  Settings, Par: TStringList;
+  Param: TParam;
+  i, ValInt: Integer;
+  Val: Double;
 begin
   i := -1;
   try
@@ -400,7 +408,7 @@ begin
 
     if Path.IsEmpty then
     begin
-      Settings := LoadIni('eu07.ini',SettingsAge);
+      Settings := LoadIni('eu07.ini', SettingsAge);
 
       if SettingsAge = -1 then
         Main.actDefaultSettingsExecute(self);
@@ -427,136 +435,105 @@ begin
         Param.Name := GetParamName;
 
         Lexer.NextNoSpace;
-        Param.Value:= Trim(GetParamValue);
+        Param.Value := Trim(GetParamValue);
 
-        if Pos('zmq.address',Param.Name) > 0 then
+        if Pos('zmq.address', Param.Name) > 0 then
           Param.Value := Param.Value + Lexer.Token
-        else
-          if Lexer.TokenID = ptSlashesComment then Param.Desc := Lexer.Token;
+        else if Lexer.TokenID = ptSlashesComment then
+          Param.Desc := Lexer.Token;
       end;
 
       Lexer.NextNoSpace;
       Params.Add(Param);
     end;
 
-     Settings.Free;
-     Lexer.Free;
+    Settings.Free;
+    Lexer.Free;
 
-    for i := 0 to Params.Count-1 do
+    for i := 0 to Params.Count - 1 do
     begin
-      if Params[i].Name = 'width' then ParWidth := Params[i].Value else
-      if Params[i].Name = 'height' then ParHeight := Params[i].Value else
-      if Params[i].Name = 'fullscreenwindowed' then
+      if Params[i].Name = 'width' then
+        ParWidth := Params[i].Value
+      else if Params[i].Name = 'height' then
+        ParHeight := Params[i].Value
+      else if Params[i].Name = 'fullscreenwindowed' then
         Main.chFullScreenWindowed.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'fullscreen' then
+      else if Params[i].Name = 'fullscreen' then
         Main.chFullScreen.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'inactivepause' then
+      else if Params[i].Name = 'inactivepause' then
         Main.chInactivepause.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'pause' then
+      else if Params[i].Name = 'pause' then
         Main.chPause.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'shadows' then
+      else if Params[i].Name = 'shadows' then
         Main.chShadows.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'vsync' then
+      else if Params[i].Name = 'vsync' then
         Main.chVsync.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'usevbo' then
+      else if Params[i].Name = 'usevbo' then
         Main.chUsevbo.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'fullphysics' then
+      else if Params[i].Name = 'fullphysics' then
         Main.chFullphysics.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.resource.sweep' then
+      else if Params[i].Name = 'gfx.resource.sweep' then
         frmSettingsAdv.chGfxresourcesweep.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.resource.move' then
+      else if Params[i].Name = 'gfx.resource.move' then
         frmSettingsAdv.chGfxresourcemove.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'debugmode' then
+      else if Params[i].Name = 'debugmode' then
         Main.chDebugmode.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'ai.trainman' then
+      else if Params[i].Name = 'ai.trainman' then
         Main.chTrainMan.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'soundenabled' then
+      else if Params[i].Name = 'soundenabled' then
         Main.chSoundenabled.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'enabletraction' then
+      else if Params[i].Name = 'enabletraction' then
         Main.chEnabletraction.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'livetraction' then
+      else if Params[i].Name = 'livetraction' then
         Main.chLivetraction.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'physicslog' then
+      else if Params[i].Name = 'physicslog' then
         Main.chPhysicslog.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'multiplelogs' then
+      else if Params[i].Name = 'multiplelogs' then
         Main.chMultiplelogs.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'input.gamepad' then
+      else if Params[i].Name = 'input.gamepad' then
         Main.Chinputgamepad.Checked := Params[i].Value = 'no'
-      else
-      if Params[i].Name = 'gfx.postfx.motionblur.enabled' then
+      else if Params[i].Name = 'gfx.postfx.motionblur.enabled' then
         Main.chMotionBlur.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.envmap.enabled' then
+      else if Params[i].Name = 'gfx.envmap.enabled' then
         Main.chEnvmap.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.smoke' then
+      else if Params[i].Name = 'gfx.smoke' then
         Main.chSmoke.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.extraeffects' then
+      else if Params[i].Name = 'gfx.extraeffects' then
         Main.chExtraEffects.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'scalespeculars' then
+      else if Params[i].Name = 'scalespeculars' then
         frmSettingsAdv.chScaleSpeculars.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.shadowmap.enabled' then
+      else if Params[i].Name = 'gfx.shadowmap.enabled' then
         Main.chShadowMap.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'python.threadedupload' then
+      else if Params[i].Name = 'python.threadedupload' then
         Main.chPythonThreadedUpload.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'python.enabled' then
+      else if Params[i].Name = 'python.enabled' then
         Main.chPythonEnabled.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.skiprendering' then
+      else if Params[i].Name = 'gfx.skiprendering' then
         Main.chSkipRendering.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'crashdamage' then
+      else if Params[i].Name = 'crashdamage' then
         Main.chCrashDamage.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled' then
+      else if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled' then
         Main.chChromaticAberration.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.skippipeline' then
+      else if Params[i].Name = 'gfx.skippipeline' then
         Main.chSkipPipeline.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.angleplatform' then
+      else if Params[i].Name = 'gfx.angleplatform' then
         Main.chAngle.Checked := Params[i].Value = 'vulkan'
-      else
-      if Params[i].Name = 'compresstex' then
+      else if Params[i].Name = 'compresstex' then
         frmSettingsAdv.chCompressTex.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.usegles' then
+      else if Params[i].Name = 'gfx.usegles' then
         frmSettingsAdv.chUseGLES.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'gfx.shadergamma' then
+      else if Params[i].Name = 'gfx.shadergamma' then
         frmSettingsAdv.chShaderGamma.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'python.mipmaps' then
+      else if Params[i].Name = 'python.mipmaps' then
         frmSettingsAdv.chMipmaps.Checked := Params[i].Value = 'yes'
-      else
-      if Params[i].Name = 'debuglog' then
+      else if Params[i].Name = 'debuglog' then
       begin
-        if Params[i].Value = 'yes' then ValInt := 3 else
-        if Params[i].Value = 'no' then ValInt := 0
+        if Params[i].Value = 'yes' then
+          ValInt := 3
+        else if Params[i].Value = 'no' then
+          ValInt := 0
         else
-          TryStrToInt(Params[i].Value,ValInt);
+          TryStrToInt(Params[i].Value, ValInt);
 
         DebugLogTrack := False;
         DebugLogSpeed := False;
@@ -565,208 +542,211 @@ begin
         if ValInt >= 8 then
         begin
           DebugLogSpeed := True;
-          Dec(ValInt,8);
+          Dec(ValInt, 8);
         end;
         if ValInt >= 4 then
         begin
           DebugLogTrack := True;
-          Dec(ValInt,4);
+          Dec(ValInt, 4);
         end;
         if ValInt >= 2 then
         begin
           Main.chDebugLogVis.Checked := True;
-          Dec(ValInt,2);
+          Dec(ValInt, 2);
         end;
         if ValInt >= 1 then
           Main.chDebuglog.Checked := True;
       end
-      else
-      if Params[i].Name = 'mousescale' then
+      else if Params[i].Name = 'mousescale' then
       begin
         Par := TStringList.Create;
-        ExtractStrings([' '],[],PChar(Params[i].Value),Par);
+        ExtractStrings([' '], [], PChar(Params[i].Value), Par);
         Main.cbMouseScale.ItemIndex := 0;
         if Abs(StrToFloat(Par[0])) < 1.3 then
           Main.cbMouseScale.ItemIndex := 1
-        else
-        if Abs(StrToFloat(Par[0])) > 1.9 then
+        else if Abs(StrToFloat(Par[0])) > 1.9 then
           Main.cbMouseScale.ItemIndex := 2;
         if Abs(StrToFloat(Par[0])) > 2.7 then
           Main.cbMouseScale.ItemIndex := 3;
 
         Main.chMouseInversionHorizontal.Checked := StrToFloat(Par[0]) < 0;
-        Main.chMouseInversionVertical.Checked   := StrToFloat(Par[1]) < 0;
+        Main.chMouseInversionVertical.Checked := StrToFloat(Par[1]) < 0;
 
         Par.Free;
       end
-      else
-      if Params[i].Name = 'feedbackmode' then
+      else if Params[i].Name = 'feedbackmode' then
       begin
         Main.cbFeedbackmode.ItemIndex := StrToInt(Params[i].Value);
         Main.pnlFeedbackport.Visible := Main.cbFeedbackmode.ItemIndex = 3;
         Main.actCOM.Visible := Main.cbFeedbackmode.ItemIndex = 5;
       end
-      else
-      if Params[i].Name = 'feedbackport' then Main.edFeedbackport.Text := Params[i].Value else
-      if Params[i].Name = 'friction' then Main.edFriction.Text := Params[i].Value else
-      if Params[i].Name = 'fieldofview' then Main.edFieldofview.Text := Params[i].Value else
-      if Params[i].Name = 'dynamiclights' then Main.seDynamicLights.Value := Params[i].Value.ToInteger else
-      if Params[i].Name = 'async.trainThreads' then frmSettingsAdv.seThreads.Value := Params[i].Value.ToInteger else
-      if Params[i].Name = 'fpslimit' then
+      else if Params[i].Name = 'feedbackport' then
+        Main.edFeedbackport.Text := Params[i].Value
+      else if Params[i].Name = 'friction' then
+        Main.edFriction.Text := Params[i].Value
+      else if Params[i].Name = 'fieldofview' then
+        Main.edFieldofview.Text := Params[i].Value
+      else if Params[i].Name = 'dynamiclights' then
+        Main.seDynamicLights.Value := Params[i].Value.ToInteger
+      else if Params[i].Name = 'async.trainThreads' then
+        frmSettingsAdv.seThreads.Value := Params[i].Value.ToInteger
+      else if Params[i].Name = 'fpslimit' then
       begin
         Main.seFPSLimit.Value := StrToInt(Params[i].Value);
         Main.chFPSLimiter.Checked := True;
       end
-      else
-      if Params[i].Name = 'sound.volume' then
+      else if Params[i].Name = 'sound.volume' then
         Main.tbSoundVolume.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'sound.volume.radio' then
+      else if Params[i].Name = 'sound.volume.radio' then
         Main.tbRadioVolume.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'sound.volume.vehicle' then
-        Main.tbVehiclesSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'sound.volume.positional' then
-        Main.tbPositionalsSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'sound.volume.ambient' then
+      else if Params[i].Name = 'sound.volume.vehicle' then
+        Main.tbVehiclesSounds.Position :=
+          Round(StrToFloat(Params[i].Value) * 10)
+      else if Params[i].Name = 'sound.volume.positional' then
+        Main.tbPositionalsSounds.Position :=
+          Round(StrToFloat(Params[i].Value) * 10)
+      else if Params[i].Name = 'sound.volume.ambient' then
         Main.tbGlobalSounds.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'sound.volume.paused' then
+      else if Params[i].Name = 'sound.volume.paused' then
         Main.tbVolumePaused.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'gfx.shadow.angle.min' then
+      else if Params[i].Name = 'gfx.shadow.angle.min' then
         Main.tbShadowSize.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'brakestep' then
+      else if Params[i].Name = 'brakestep' then
         Main.tbBrakeStep.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'brakespeed' then
+      else if Params[i].Name = 'brakespeed' then
         Main.tbBrakeSpeed.Position := Round(StrToFloat(Params[i].Value) * 10)
-      else
-      if Params[i].Name = 'gfx.reflections.framerate' then
+      else if Params[i].Name = 'gfx.reflections.framerate' then
       begin
-        if StrToFloat(Params[i].Value) < 2 then Main.cbReflectionsFramerate.ItemIndex := 0;
-        if StrToFloat(Params[i].Value) > 1 then Main.cbReflectionsFramerate.ItemIndex := 1;
-        if StrToFloat(Params[i].Value) > 4 then Main.cbReflectionsFramerate.ItemIndex := 2;
-        if StrToFloat(Params[i].Value) > 14 then Main.cbReflectionsFramerate.ItemIndex := 3;
-        if StrToFloat(Params[i].Value) > 43 then Main.cbReflectionsFramerate.ItemIndex := 4;
+        if StrToFloat(Params[i].Value) < 2 then
+          Main.cbReflectionsFramerate.ItemIndex := 0;
+        if StrToFloat(Params[i].Value) > 1 then
+          Main.cbReflectionsFramerate.ItemIndex := 1;
+        if StrToFloat(Params[i].Value) > 4 then
+          Main.cbReflectionsFramerate.ItemIndex := 2;
+        if StrToFloat(Params[i].Value) > 14 then
+          Main.cbReflectionsFramerate.ItemIndex := 3;
+        if StrToFloat(Params[i].Value) > 43 then
+          Main.cbReflectionsFramerate.ItemIndex := 4;
       end
-      else
-      if Params[i].Name = 'gfx.shadows.cab.range' then
+      else if Params[i].Name = 'gfx.shadows.cab.range' then
       begin
         Val := StrToFloat(Params[i].Value);
-        if Val = 0 then Main.cbShadowsCabRange.ItemIndex := 0 else
-        if Val > 0 then Main.cbShadowsCabRange.ItemIndex := 1;
-        if Val > 15 then Main.cbShadowsCabRange.ItemIndex := 2;
-        if Val > 25 then Main.cbShadowsCabRange.ItemIndex := 3;
-        if Val > 40 then Main.cbShadowsCabRange.ItemIndex := 4;
-        if Val > 80 then Main.cbShadowsCabRange.ItemIndex := 5;
+        if Val = 0 then
+          Main.cbShadowsCabRange.ItemIndex := 0
+        else if Val > 0 then
+          Main.cbShadowsCabRange.ItemIndex := 1;
+        if Val > 15 then
+          Main.cbShadowsCabRange.ItemIndex := 2;
+        if Val > 25 then
+          Main.cbShadowsCabRange.ItemIndex := 3;
+        if Val > 40 then
+          Main.cbShadowsCabRange.ItemIndex := 4;
+        if Val > 80 then
+          Main.cbShadowsCabRange.ItemIndex := 5;
       end
-      else
-      if Params[i].Name = 'gfxrenderer' then
+      else if Params[i].Name = 'gfxrenderer' then
       begin
-        if Params[i].Value = 'full'         then Main.cbGfxrenderer.ItemIndex := 0 else
-        if Params[i].Value = 'legacy'       then Main.cbGfxrenderer.ItemIndex := 2 else
-        if Params[i].Value = 'simple'       then Main.cbGfxrenderer.ItemIndex := 3 else
-        if Params[i].Value = 'experimental' then Main.cbGfxrenderer.ItemIndex := 4;
+        if Params[i].Value = 'full' then
+          Main.cbGfxrenderer.ItemIndex := 0
+        else if Params[i].Value = 'legacy' then
+          Main.cbGfxrenderer.ItemIndex := 2
+        else if Params[i].Value = 'simple' then
+          Main.cbGfxrenderer.ItemIndex := 3
+        else if Params[i].Value = 'experimental' then
+          Main.cbGfxrenderer.ItemIndex := 4;
       end
-      else
-      if Params[i].Name = 'maxtexturesize' then
+      else if Params[i].Name = 'maxtexturesize' then
       begin
         case StrToInt(Params[i].Value) of
-          512:    Main.cbMaxtexturesize.ItemIndex := 0;
-          1024:   Main.cbMaxtexturesize.ItemIndex := 1;
-          2048:   Main.cbMaxtexturesize.ItemIndex := 2;
-          4096:   Main.cbMaxtexturesize.ItemIndex := 3;
-          8192:   Main.cbMaxtexturesize.ItemIndex := 4;
-          16384:  Main.cbMaxtexturesize.ItemIndex := 5;
+          512: Main.cbMaxtexturesize.ItemIndex := 0;
+          1024: Main.cbMaxtexturesize.ItemIndex := 1;
+          2048: Main.cbMaxtexturesize.ItemIndex := 2;
+          4096: Main.cbMaxtexturesize.ItemIndex := 3;
+          8192: Main.cbMaxtexturesize.ItemIndex := 4;
+          16384: Main.cbMaxtexturesize.ItemIndex := 5;
         end;
       end
-      else
-      if Params[i].Name = 'maxcabtexturesize' then
+      else if Params[i].Name = 'maxcabtexturesize' then
       begin
         case StrToInt(Params[i].Value) of
-          512:    Main.cbMaxcabtexturesize.ItemIndex := 1;
-          1024:   Main.cbMaxcabtexturesize.ItemIndex := 2;
-          2048:   Main.cbMaxcabtexturesize.ItemIndex := 3;
-          4096:   Main.cbMaxcabtexturesize.ItemIndex := 4;
+          512: Main.cbMaxcabtexturesize.ItemIndex := 1;
+          1024: Main.cbMaxcabtexturesize.ItemIndex := 2;
+          2048: Main.cbMaxcabtexturesize.ItemIndex := 3;
+          4096: Main.cbMaxcabtexturesize.ItemIndex := 4;
         end;
         if Main.cbMaxcabtexturesize.ItemIndex <= 0 then
           Main.cbMaxcabtexturesize.ItemIndex := 0;
       end
-      else
-      if Params[i].Name = 'gfx.reflections.fidelity' then
-        Main.cbReflectionsFidelity.ItemIndex := StrToInt(Params[i].Value) else
-      if Params[i].Name = 'multisampling' then Main.cbMultisampling.ItemIndex := StrToInt(Params[i].Value) else
-      if Params[i].Name = 'gfx.smoke.fidelity' then Main.cbSmokeFidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
-      if Params[i].Name = 'convertmodels' then
+      else if Params[i].Name = 'gfx.reflections.fidelity' then
+        Main.cbReflectionsFidelity.ItemIndex := StrToInt(Params[i].Value)
+      else if Params[i].Name = 'multisampling' then
+        Main.cbMultisampling.ItemIndex := StrToInt(Params[i].Value)
+      else if Params[i].Name = 'gfx.smoke.fidelity' then
+        Main.cbSmokeFidelity.ItemIndex := StrToInt(Params[i].Value) - 1
+      else if Params[i].Name = 'convertmodels' then
         frmSettingsAdv.cbConvertmodels.Text := Params[i].Value
-      else
-      if Params[i].Name = 'anisotropicfiltering' then
+      else if Params[i].Name = 'anisotropicfiltering' then
       begin
         case StrToInt(Params[i].Value) of
-          1:  Main.cbAnisotropicfiltering.ItemIndex := 0;
-          2:  Main.cbAnisotropicfiltering.ItemIndex := 1;
-          4:  Main.cbAnisotropicfiltering.ItemIndex := 2;
-          8:  Main.cbAnisotropicfiltering.ItemIndex := 3;
+          1: Main.cbAnisotropicfiltering.ItemIndex := 0;
+          2: Main.cbAnisotropicfiltering.ItemIndex := 1;
+          4: Main.cbAnisotropicfiltering.ItemIndex := 2;
+          8: Main.cbAnisotropicfiltering.ItemIndex := 3;
           16: Main.cbAnisotropicfiltering.ItemIndex := 4;
         end;
       end
-      else
-      if Params[i].Name = 'pyscreenrendererpriority' then
+      else if Params[i].Name = 'pyscreenrendererpriority' then
       begin
-        if Params[i].Value = 'normal' then Main.cbPyscreenrendererpriority.ItemIndex := 0
-        else
-        if Params[i].Value = 'lower' then Main.cbPyscreenrendererpriority.ItemIndex := 1
-        else
-        if Params[i].Value = 'lowest' then Main.cbPyscreenrendererpriority.ItemIndex := 2
-        else
-        if Params[i].Value = 'idle' then Main.cbPyscreenrendererpriority.ItemIndex := 3
-        else
-        if Params[i].Value = 'off' then Main.cbPyscreenrendererpriority.ItemIndex := 4;
+        if Params[i].Value = 'normal' then
+          Main.cbPyscreenrendererpriority.ItemIndex := 0
+        else if Params[i].Value = 'lower' then
+          Main.cbPyscreenrendererpriority.ItemIndex := 1
+        else if Params[i].Value = 'lowest' then
+          Main.cbPyscreenrendererpriority.ItemIndex := 2
+        else if Params[i].Value = 'idle' then
+          Main.cbPyscreenrendererpriority.ItemIndex := 3
+        else if Params[i].Value = 'off' then
+          Main.cbPyscreenrendererpriority.ItemIndex := 4;
       end
-      else
-      if Params[i].Name = 'gfx.drawrange.factor.max' then
-        Main.cbDrawRange.ItemIndex := Round(StrToFloat(Params[i].Value))-1
-      else
-      if Params[i].Name = 'gfx.shadow.rank.cutoff' then
-        Main.cbShadowRank.ItemIndex := Round(StrToFloat(Params[i].Value))-1
-      else
-      if Params[i].Name = 'gfx.framebuffer.fidelity' then
-        Main.cbBuffer.ItemIndex := StrToInt(Params[i].Value)-1
-      else
-      if Params[i].Name = 'splinefidelity' then Main.cbSplinefidelity.ItemIndex := StrToInt(Params[i].Value)-1 else
-      if Params[i].Name = 'lang' then
+      else if Params[i].Name = 'gfx.drawrange.factor.max' then
+        Main.cbDrawRange.ItemIndex := Round(StrToFloat(Params[i].Value)) - 1
+      else if Params[i].Name = 'gfx.shadow.rank.cutoff' then
+        Main.cbShadowRank.ItemIndex := Round(StrToFloat(Params[i].Value)) - 1
+      else if Params[i].Name = 'gfx.framebuffer.fidelity' then
+        Main.cbBuffer.ItemIndex := StrToInt(Params[i].Value) - 1
+      else if Params[i].Name = 'splinefidelity' then
+        Main.cbSplinefidelity.ItemIndex := StrToInt(Params[i].Value) - 1
+      else if Params[i].Name = 'lang' then
       begin
         if Main.cbLang.Items.IndexOf(UpperCase(Params[i].Value)) < 0 then
           Main.cbLang.Items.Add(UpperCase(Params[i].Value));
 
-        Main.cbLang.ItemIndex := Main.cbLang.Items.IndexOf(UpperCase(Params[i].Value))
+        Main.cbLang.ItemIndex := Main.cbLang.Items.IndexOf
+          (UpperCase(Params[i].Value))
       end
-      else
-      if Params[i].Name = 'shadowtune' then
+      else if Params[i].Name = 'shadowtune' then
       begin
         Par := TStringList.Create;
-        ExtractStrings([' '],[],PChar(Params[i].Value),Par);
+        ExtractStrings([' '], [], PChar(Params[i].Value), Par);
         if Par.Count > 0 then
         begin
-          if Par[0] = '1024' then Main.cbShadowMapSize.ItemIndex := 0
-          else
-          if Par[0] = '2048' then Main.cbShadowMapSize.ItemIndex := 1
-          else
-          if Par[0] = '4096' then Main.cbShadowMapSize.ItemIndex := 2
-          else
-          if Par[0] = '8192' then Main.cbShadowMapSize.ItemIndex := 3;
+          if Par[0] = '1024' then
+            Main.cbShadowMapSize.ItemIndex := 0
+          else if Par[0] = '2048' then
+            Main.cbShadowMapSize.ItemIndex := 1
+          else if Par[0] = '4096' then
+            Main.cbShadowMapSize.ItemIndex := 2
+          else if Par[0] = '8192' then
+            Main.cbShadowMapSize.ItemIndex := 3;
 
-          if StrToInt(Par[2]) >= 400 then Main.cbShadowRange.ItemIndex := 4
-          else
-          if StrToInt(Par[2]) >= 250 then Main.cbShadowRange.ItemIndex := 3
-          else
-          if StrToInt(Par[2]) >= 150 then Main.cbShadowRange.ItemIndex := 2
-          else
-          if StrToInt(Par[2]) >= 50 then Main.cbShadowRange.ItemIndex := 1
+          if StrToInt(Par[2]) >= 400 then
+            Main.cbShadowRange.ItemIndex := 4
+          else if StrToInt(Par[2]) >= 250 then
+            Main.cbShadowRange.ItemIndex := 3
+          else if StrToInt(Par[2]) >= 150 then
+            Main.cbShadowRange.ItemIndex := 2
+          else if StrToInt(Par[2]) >= 50 then
+            Main.cbShadowRange.ItemIndex := 1
           else
             Main.cbShadowRange.ItemIndex := 0;
         end
@@ -779,23 +759,28 @@ begin
         Par.Free;
       end;
     end;
-    Main.cbResolution.ItemIndex := Main.cbResolution.Items.IndexOf(ParWidth + ' x ' + ParHeight);
+    Main.cbResolution.ItemIndex := Main.cbResolution.Items.IndexOf
+      (ParWidth + ' x ' + ParHeight);
     if Main.cbResolution.ItemIndex = -1 then
-      Main.cbResolution.ItemIndex := Main.cbResolution.Items.Count-1;
+      Main.cbResolution.ItemIndex := Main.cbResolution.Items.Count - 1;
 
     if (Main.cbGfxrenderer.ItemIndex = 0) and (Main.chSkipPipeline.Checked) then
       Main.cbGfxrenderer.ItemIndex := 1;
 
-    if Main.cbBuffer.ItemIndex = -1 then Main.cbBuffer.ItemIndex := 3;
+    if Main.cbBuffer.ItemIndex = -1 then
+      Main.cbBuffer.ItemIndex := 3;
   except
     on E: Exception do
     begin
-      Token := Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['eu07.ini']) + #13#10;
+      Token := Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT), ['eu07.ini']
+        ) + #13#10;
 
-      if (i >= 0) and (i < Params.Count-1) then
-        Token := Token + Util.LabelStr(CAP_PARAMETER) + ': ' + Params[i].Name + #13#10
-                       + Util.LabelStr(CAP_INVALID_VALUE) + ': ' + Params[i].Value + #13#10;
-      Token := Token + Util.LabelStr(CAP_FAULT_DETAIL) + ':' + #13#10 + E.Message;
+      if (i >= 0) and (i < Params.Count - 1) then
+        Token := Token + Util.LabelStr(CAP_PARAMETER) + ': ' + Params[i].Name +
+          #13#10 + Util.LabelStr(CAP_INVALID_VALUE) + ': ' + Params[i]
+          .Value + #13#10;
+      Token := Token + Util.LabelStr(CAP_FAULT_DETAIL) + ':' + #13#10 +
+        E.Message;
 
       ShowMessage(Token);
       Util.Log.Add(Token);
@@ -803,7 +788,8 @@ begin
   end;
 end;
 
-procedure TSettings.SetCheckState(const State:Boolean; const ParamIndex:Integer);
+procedure TSettings.SetCheckState(const State: Boolean;
+const ParamIndex: Integer);
 begin
   if State then
     Params[ParamIndex].Value := 'yes'
@@ -813,7 +799,7 @@ end;
 
 procedure TSettings.SaveOwnSettings;
 var
-  Settings : TStringList;
+  Settings: TStringList;
 begin
   Settings := TStringList.Create;
   Settings.Add('lang=' + LowerCase(Main.cbLang.Text));
@@ -844,6 +830,11 @@ begin
   else
     Settings.Add('SortByVehicleName=no');
 
+  if Main.cbDisplaySimLog.Checked then
+    Settings.Add('DisplaySimulatorLog=yes')
+  else
+    Settings.Add('DisplaySimulatorLog=no');
+
   if frmSettingsAdv.chIgnoreIrrevelant.Checked then
     Settings.Add('IgnoreIrrevelant=yes');
 
@@ -862,133 +853,140 @@ begin
   Settings.Add('Battery=' + Main.cbBattery.ItemIndex.ToString);
   Settings.Add('LastUpdate=' + IntToStr(Main.lbVersion.Tag));
   Settings.Add('UpdateInterval=' + Main.edUpdateInterval.Text);
-  Settings.Add('HDR=' +  Main.cbHDR.ItemIndex.ToString);
+  Settings.Add('HDR=' + Main.cbHDR.ItemIndex.ToString);
   if Main.tvSCN.Selected <> nil then
     Settings.Add('InitSCN=' + Main.tvSCN.Selected.Text);
 
   if UTF8 then
     Settings.Add('utf8=yes');
 
-  SaveIni('starter\starter.ini',Settings);
+  SaveIni('starter\starter.ini', Settings);
   Settings.Free;
 end;
 
-function TSettings.eu07exeSelected:string;
+function TSettings.eu07exeSelected: string;
 begin
   if Main.cbEXE.ItemIndex = 0 then
-    Result := PChar(Main.cbEXE.Items[Main.cbEXE.Items.Count-1])
+    Result := PChar(Main.cbEXE.Items[Main.cbEXE.Items.Count - 1])
   else
     Result := PChar(Main.cbEXE.Text);
 end;
 
-function TSettings.eu07exeVersion:Integer;
+function TSettings.eu07exeVersion: Integer;
 var
-  VerStr : string;
+  VerStr: string;
 begin
   if FileExists(Util.DIR + eu07exeSelected) then
   begin
-    VerStr := Util.GetFileVersion(Util.DIR + eu07exeSelected,'%.2d%.2d');
+    VerStr := Util.GetFileVersion(Util.DIR + eu07exeSelected, '%.2d%.2d');
 
-    if not TryStrToInt(VerStr,Result) then
+    if not TryStrToInt(VerStr, Result) then
       Result := -1;
   end;
 end;
 
 procedure TSettings.RendererExperimental;
 var
-  VerStr : string;
-  VerInt : Integer;
+  VerStr: string;
+  VerInt: Integer;
 begin
-  Main.cbGfxrenderer.Items.Delete(Main.cbGfxrenderer.Items.IndexOf('experimental'));
+  Main.cbGfxrenderer.Items.Delete(Main.cbGfxrenderer.Items.IndexOf
+    ('experimental'));
 
   if FileExists(Util.DIR + eu07exeSelected) then
   begin
-    VerStr := Util.GetFileVersion(Util.DIR + eu07exeSelected,'%.2d%.2d');
+    VerStr := Util.GetFileVersion(Util.DIR + eu07exeSelected, '%.2d%.2d');
 
-    if TryStrToInt(VerStr,VerInt) then
+    if TryStrToInt(VerStr, VerInt) then
       if VerInt >= 2504 then
         Main.cbGfxrenderer.Items.Add('experimental');
   end;
 end;
 
-procedure TSettings.ReadOwnSettings(const FirstRun:boolean=False);
+procedure TSettings.ReadOwnSettings(const FirstRun: Boolean = False);
 var
-  Settings : TStringList;
-  ParName, ParValue : string;
-  i : Integer;
+  Settings: TStringList;
+  ParName, ParValue: string;
+  i: Integer;
 begin
   try
     LoadEXE;
 
     Settings := LoadIni('starter\starter.ini');
 
-    for i := 0 to Settings.Count-1 do
+    for i := 0 to Settings.Count - 1 do
     begin
-      ParName := Copy(Settings[i],0,Pos('=',Settings[i])-1);
-      ParValue := Copy(Settings[i],Pos('=',Settings[i])+1,Settings[i].Length);
+      ParName := Copy(Settings[i], 0, Pos('=', Settings[i]) - 1);
+      ParValue := Copy(Settings[i], Pos('=', Settings[i]) + 1,
+        Settings[i].Length);
 
-      if SameText(ParName,'lang') then
+      if SameText(ParName, 'lang') then
       begin
         TLanguages.FillLangLabels;
 
         Util.Lang := ParValue;
-        if not ((FirstRun) and (ParValue = 'pl')) then
-          TLanguages.ChangeLanguage(Main,ParValue);
+        if not((FirstRun) and (ParValue = 'pl')) then
+          TLanguages.ChangeLanguage(Main, ParValue);
       end
-      else if SameText(ParName,'AutoClosingApp') then
+      else if SameText(ParName, 'AutoClosingApp') then
         Main.cbCloseApp.Checked := ParValue = 'yes'
-      else if SameText(ParName,'MiniPic') then
+      else if SameText(ParName, 'MiniPic') then
         Main.cbBigThumbnail.Checked := ParValue = 'yes'
-      else if SameText(ParName,'OnlyForDriving') then
+      else if SameText(ParName, 'OnlyForDriving') then
         Main.chOnlyForDriving.Checked := ParValue = 'yes'
-      else if SameText(ParName,'ShowAI') then
+      else if SameText(ParName, 'ShowAI') then
         Main.chShowAI.Checked := ParValue = 'yes'
-      else if SameText(ParName,'AutoExpandTree') then
+      else if SameText(ParName, 'AutoExpandTree') then
         Main.chAutoExpandTree.Checked := ParValue = 'yes'
-      else if SameText(ParName,'HideArchival') then
+      else if SameText(ParName, 'HideArchival') then
         Main.chHideArchival.Checked := ParValue = 'yes'
-      else if SameText(ParName,'HideArchivalVehicles') then
+      else if SameText(ParName, 'HideArchivalVehicles') then
         Main.chHideArchivalVehicles.Checked := ParValue <> 'no'
-      else if SameText(ParName,'UART') then
+      else if SameText(ParName, 'UART') then
         UART := ParValue
-      else if SameText(ParName,'SortByVehicleName') then
+      else if SameText(ParName, 'SortByVehicleName') then
       begin
-        Main.miSortByTrackName.Checked    := ParValue = 'no';
-        Main.miSortByVehicleName.Checked  := ParValue = 'yes';
+        Main.miSortByTrackName.Checked := ParValue = 'no';
+        Main.miSortByVehicleName.Checked := ParValue = 'yes';
       end
-      else if SameText(ParName,'exe') then
+      else if SameText(ParName, 'DisplaySimulatorLog') then
+      begin
+        Main.cbDisplaySimLog.Checked := ParValue = 'yes';
+      end
+      else if SameText(ParName, 'exe') then
         Main.cbEXE.ItemIndex := Main.cbEXE.Items.IndexOf(ParValue)
-      else if SameText(Parname,'Battery') then
+      else if SameText(ParName, 'Battery') then
         Main.cbBattery.ItemIndex := StrToInt(ParValue)
-      else
-      if SameText(ParName,'WindowMaximized') then
-       begin
-         if ParValue = 'yes' then Main.WindowState := wsMaximized;
-       end
-      else if SameText(ParName,'LastUpdate') then
+      else if SameText(ParName, 'WindowMaximized') then
+      begin
+        if ParValue = 'yes' then
+          Main.WindowState := wsMaximized;
+      end
+      else if SameText(ParName, 'LastUpdate') then
         Main.lbVersion.Tag := StrToInt(ParValue)
-      else if SameText(ParName,'UpdateInterval') then
+      else if SameText(ParName, 'UpdateInterval') then
         Main.edUpdateInterval.Value := StrToInt(ParValue)
-      else if SameText(ParName,'InitSCN') then
+      else if SameText(ParName, 'InitSCN') then
         Util.InitSCN := ParValue
-      else if SameText(ParName,'IgnoreIrrevelant') then
+      else if SameText(ParName, 'IgnoreIrrevelant') then
         IgnoreIrrelevant := ParValue = 'yes'
-      else if SameText(ParName,'LogExt') then
+      else if SameText(ParName, 'LogExt') then
         Main.chLogExt.Checked := ParValue = 'yes'
-      else if SameText(ParName,'HDR') then
+      else if SameText(ParName, 'HDR') then
         Main.cbHDR.ItemIndex := StrToInt(ParValue);
     end;
 
     Settings.Free;
 
-    if Main.lbVersion.Tag < DaysBetween(Now,0)- Abs(StrToInt(Main.edUpdateInterval.Text))+1 then
+    if Main.lbVersion.Tag < DaysBetween(Now, 0) -
+      Abs(StrToInt(Main.edUpdateInterval.Text)) + 1 then
     begin
       if StrToInt(Main.edUpdateInterval.Text) >= 0 then
-        TfrmUpdater.UpdateProgram(False,False)
+        TfrmUpdater.UpdateProgram(False, False)
       else
-        TfrmUpdater.UpdateProgram(True,False);
+        TfrmUpdater.UpdateProgram(True, False);
 
-      Main.lbVersion.Tag := DaysBetween(Now,0);
+      Main.lbVersion.Tag := DaysBetween(Now, 0);
     end;
 
     if Main.cbEXE.ItemIndex < 0 then
@@ -998,17 +996,19 @@ begin
   except
     on E: Exception do
     begin
-      ShowMessage(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['starter\starter.ini']) + #13#10
-                                    + Util.LabelStr(CAP_FAULT_DETAIL) + #13#10 + E.Message);
-      Util.Log.Add(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['starter\starter.ini']) + #13#10
-                                    + Util.LabelStr(CAP_FAULT_DETAIL) + #13#10 + E.Message);
+      ShowMessage(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),
+        ['starter\starter.ini']) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) +
+        #13#10 + E.Message);
+      Util.Log.Add(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),
+        ['starter\starter.ini']) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) +
+        #13#10 + E.Message);
     end;
   end;
 end;
 
-procedure TSettings.AddParam(const Name:String;const Desc:string);
+procedure TSettings.AddParam(const Name: String; const Desc: string);
 var
-  Param : TParam;
+  Param: TParam;
 begin
   Param := TParam.Create;
   Param.Name := Name;
@@ -1016,122 +1016,169 @@ begin
   Params.Add(Param);
 end;
 
-procedure TSettings.RemoveParam(const Name:String);
+procedure TSettings.RemoveParam(const Name: String);
 var
-  i : Integer;
+  i: Integer;
 begin
   i := 0;
-  while (Params[i].Name <> Name) and (i < Params.Count-1) do
+  while (Params[i].Name <> Name) and (i < Params.Count - 1) do
     Inc(i);
 
   if Params[i].Name = Name then
     Params.Extract(Params[i]);
 end;
 
-procedure TSettings.FindParameter(const Name:string;const Desc:string='');
+procedure TSettings.FindParameter(const Name: string; const Desc: string = '');
 var
-  i : Integer;
+  i: Integer;
 begin
   if Params.Count > 0 then
   begin
     i := 0;
-    while (i < Params.Count-1) and (Name <> Params[i].Name) do
+    while (i < Params.Count - 1) and (Name <> Params[i].Name) do
       Inc(i);
 
     if Name <> Params[i].Name then
-      AddParam(Name,Desc);
+      AddParam(Name, Desc);
   end
   else
-    AddParam(Name,Desc);
+    AddParam(Name, Desc);
 end;
 
 procedure TSettings.CheckParams;
 var
-  P : TParam;
+  P: TParam;
 begin
-  FindParameter('width','(800) szerokoœæ ekranu');
-  FindParameter('height','(600) wysokoœæ ekranu');
-  FindParameter('fullscreenwindowed','(no) yes: automatyczna rozdzielczosc');
-  FindParameter('fullscreen','(no) yes: tryb pe³noekranowy');
-  FindParameter('inactivepause','(yes) zatrzymanie programu, jeœli nie jest aktywnym oknem');
-  FindParameter('pause','(no) yes: zatrzymanie symulacji zaraz po wczytaniu');
-  FindParameter('shadows','(yes) renderowanie cieni');
-  FindParameter('shadowtune','parametry shadowmapy (rozdzielczoœæ, nieu¿ywany, promieñ projekcji, nieu¿ywany)');
-  FindParameter('vsync','(no) ogranicznik klatek go 60 lub 30 fps zaleznie od wydajnoœci');
-  FindParameter('usevbo','(yes) Tryb renderowania VBO lub DisplayList');
-  FindParameter('gfxrenderer','(full/legacy/simple) pe³ny lub uproszczony tryb renderowania, mo¿e poprawiæ wydajnoœæ');
-  FindParameter('fullphysics','obliczanie fizyki ze zwiêkszon¹ dok³adnoœci¹. wy³¹czenie mo¿e spowodowaæ dziwne zachowania');
-  FindParameter('dynamiclights','(7) 1-7 iloœæ œwiate³ OpenGL przydzielanych pojazdom w scenie; przy starych kartach graficznych zmiejszyæ do 3');
-  FindParameter('gfx.skippipeline','(no) Ustawia uproszczony tryb renderowania bezpoœrednio do backbuffera. Wy³¹cza prawid³ow¹ implementacjê HDR i wszystkie efekty takie jak motionblur. Ustawienia z kategorii framebuffer, format i postfx bêd¹ ignorowane.');
-  FindParameter('gfx.shadowmap.enabled','(yes) renderowanie cieni w rendererze shaderowym');
-  FindParameter('gfx.extraeffects','(yes) Dodatkowe efekty realizowane przez shadery (np. mapowanie paralaksy)');
-  FindParameter('gfx.shadows.cab.range','Promieñ zasiêgu Ÿróde³ cieni z zewn¹trz kabiny, w metrach. Wp³ywa odwrotnie proporcjonalnie na ostroœæ cieni');
-  FindParameter('gfx.envmap.enabled','(yes) Odbicia realizowane globaln¹ cubemap¹');
-  FindParameter('gfx.reflections.framerate','(1/300) Czêstotliwoœæ odœwie¿ania odbiæ otoczenia');
-  FindParameter('gfx.postfx.motionblur.enabled','(yes) Rozmycie powodowane ruchem');
-  FindParameter('gfx.smoke','(yes) Wyœwietlanie dymu');
-  FindParameter('gfx.smoke.fidelity','(1) 1-4 Mno¿nik iloœci cz¹stek dymu');
-  FindParameter('scalespeculars','skalowanie sk³adowej specular materia³ów dla kompatybilnoœci ze starymi modelami');
-  FindParameter('gfx.resource.sweep','usuwanie nieu¿ywanych tekstur z opengl, zalecane wy³¹czenie gdy pamiêæ karty graficznej jest wystarczaj¹ca');
-  FindParameter('gfx.resource.move','tryb konserwacji pamiêci przy usuwaniu nieu¿ywanych tekstur, mo¿e powodowaæ problemy na niektórych kartach');
-  FindParameter('debugmode','(no) yes: wy³¹cza logikê rozmyt¹ s³u¿¹c¹ do detekcji awarii, w³¹cza klawisze pomocnicze');
-  FindParameter('ai.trainman','wirtualny manewrowy');
-  FindParameter('soundenabled','(yes) no: wy³¹cza odgrywanie dŸwiêków przestrzennych');
-  FindParameter('enabletraction','(yes) no: wy³¹cza ³amanie pantografu');
-  FindParameter('livetraction','(yes) no: lokomotywy elektryczne bêd¹ mia³y zasilanie, jeœli tylko podnios¹ pantografy');
-  FindParameter('physicslog','(no) yes: w³¹cza zapisywanie parametrów fizycznych dla wszystkich obsadzonych przez AI lub cz³owieka pojazdów');
-  FindParameter('debuglog','(3=yes) informacje o uruchamianiu i przebiegu dzia³ania symulacji: +1 - do pliku log.txt, +2 - wyœwietlanie w oknie, +4 - nazwy torów');
-  FindParameter('multiplelogs','(no) zapisywanie logów do katalogu /logs/ bez nadpisywania po ka¿dym uruchomieniu symulacji');
-  FindParameter('input.gamepad','(yes) no: ignorowanie sygna³u z gamepada, przydatne dla u¿ytkowników PoKeys');
-  FindParameter('mousescale','(3.2 0.5) czu³oœæ myszy, mo¿na dawaæ ujemne dla odwrócenia kierunku');
-  FindParameter('feedbackmode','(1) 0 - wy³¹czone, 1 - za³¹czone sterowanie diodami klawiatury (Caps Lock - CA/SHP, Scroll Lock - jazda na oporach rozruchowych), 2 - (Caps - CA, Scroll -SHP), 3 - LPT, 4 - PoKeys55, 5 - COM');
-  FindParameter('feedbackport','adres (dziesiêtnie) bazowy portu LPT dla feedbackmode 3 (zapalanie kontrolek wyjœciami LPT)');
-  FindParameter('friction','(1.0) mno¿nik dla wspó³czynnika tarcia');
-  FindParameter('fieldofview','(45) 15-75 k¹t widzenia kamery w pionie');
-  FindParameter('sound.volume','globalna g³oœnoœæ dŸwiêków');
-  FindParameter('sound.volume.vehicle','wzgledna glosnosc dzwiekow wydawanych przez pojazdy, gdzie X jest mnoznikiem w przedziale 0-1');
-  FindParameter('sound.volume.positional','wzgledna glosnosc pozycjonowanych dzwiekow emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
-  FindParameter('sound.volume.ambient','wzgledna glosnosc dzwiekow globalnych (o ujemnym zakresie) emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
-  FindParameter('sound.volume.paused','stopien wyciszenia dzwieku przy zalaczonej pauzie');
-  FindParameter('maxtexturesize','(16384) skalowanie zbyt du¿ych tekstur do podanego rozmiaru');
-  FindParameter('multisampling','(2) wyg³adzanie krawêdzi (poprawia obraz, ale obni¿a FPS): 0 - wy³aczone, 1 - dwukrotne, 2 - czterokrotne, 3 - oœmiokrotne');
-  FindParameter('convertmodels','(135) tworzenie plików modeli binarnych E3D z T3D: 0 - wy³¹czone, +1 - nowe Opacity, +2 - z optymalizacj¹, +4 - z bananami, +128 - rozszerzony pod exe C++, niekompatybilny ze starymi');
-  FindParameter('anisotropicfiltering','(8) 1-16 jakoœæ filtrowania anizotropowego tekstur');
-  FindParameter('pyscreenrendererpriority','(normal, lower, lowest, idle) priorytet w¹tku pythonowego renderera. Odci¹¿a procesor zmniejszaj¹c odœwie¿anie ekranów w lokomotywach.');
-  FindParameter('splinefidelity','(1) 1-4 dodatkowy podzia³ trajektorii na ³ukach, zwiêkszaj¹cy kr¹g³oœæ');
-  FindParameter('lang','(pl) jêzyk dla napisów');
-  FindParameter('python.threadedupload','(yes) wysylanie wygenerowanych obrazow ekranow przy uzyciu osobnego watku');
-  FindParameter('python.enabled','(domyslnie yes) wylacza w ogole generowanie tekstur przy uzyciu pythona');
-  FindParameter('gfx.skiprendering','(domyslnie no) wylacza w ogole wizualizacje symulacji, pozostawiajac jedynie ui');
-  FindParameter('crashdamage','(domyslnie yes) w³¹cza uszkodzenia sprzêgów i wykolejenia od zderzeñ');
-  FindParameter('gfx.postfx.chromaticaberration.enabled','(domyslnie no) Efekt aberracji chromatycznej');
-  FindParameter('compresstex','(yes) ¿¹da od sterownika kompresji ³adowanych tekstur tga');
-  FindParameter('gfx.reflections.fidelity','(0) malowanie odbic. 1: +modele stat. 2:+modele stat. i pojazdy');
-  FindParameter('python.mipmaps','(yes) Tworzenie mipmap dla tekstur generowanych skryptami pythona');
-  FindParameter('gfx.usegles','');
-  FindParameter('gfx.shadergamma','');
-  FindParameter('gfx.drawrange.factor.max','');
-  FindParameter('gfx.shadow.rank.cutoff','');
-  FindParameter('gfx.shadow.angle.min','');
-  FindParameter('brakestep','prêdkoœæ przesuwania zaworu hamulca');
+  FindParameter('width', '(800) szerokoœæ ekranu');
+  FindParameter('height', '(600) wysokoœæ ekranu');
+  FindParameter('fullscreenwindowed', '(no) yes: automatyczna rozdzielczosc');
+  FindParameter('fullscreen', '(no) yes: tryb pe³noekranowy');
+  FindParameter('inactivepause',
+    '(yes) zatrzymanie programu, jeœli nie jest aktywnym oknem');
+  FindParameter('pause', '(no) yes: zatrzymanie symulacji zaraz po wczytaniu');
+  FindParameter('shadows', '(yes) renderowanie cieni');
+  FindParameter('shadowtune',
+    'parametry shadowmapy (rozdzielczoœæ, nieu¿ywany, promieñ projekcji, nieu¿ywany)');
+  FindParameter('vsync',
+    '(no) ogranicznik klatek go 60 lub 30 fps zaleznie od wydajnoœci');
+  FindParameter('usevbo', '(yes) Tryb renderowania VBO lub DisplayList');
+  FindParameter('gfxrenderer',
+    '(full/legacy/simple) pe³ny lub uproszczony tryb renderowania, mo¿e poprawiæ wydajnoœæ');
+  FindParameter('fullphysics',
+    'obliczanie fizyki ze zwiêkszon¹ dok³adnoœci¹. wy³¹czenie mo¿e spowodowaæ dziwne zachowania');
+  FindParameter('dynamiclights',
+    '(7) 1-7 iloœæ œwiate³ OpenGL przydzielanych pojazdom w scenie; przy starych kartach graficznych zmiejszyæ do 3');
+  FindParameter('gfx.skippipeline',
+    '(no) Ustawia uproszczony tryb renderowania bezpoœrednio do backbuffera. Wy³¹cza prawid³ow¹ implementacjê HDR i wszystkie efekty takie jak motionblur. Ustawienia z kategorii framebuffer, format i postfx bêd¹ ignorowane.');
+  FindParameter('gfx.shadowmap.enabled',
+    '(yes) renderowanie cieni w rendererze shaderowym');
+  FindParameter('gfx.extraeffects',
+    '(yes) Dodatkowe efekty realizowane przez shadery (np. mapowanie paralaksy)');
+  FindParameter('gfx.shadows.cab.range',
+    'Promieñ zasiêgu Ÿróde³ cieni z zewn¹trz kabiny, w metrach. Wp³ywa odwrotnie proporcjonalnie na ostroœæ cieni');
+  FindParameter('gfx.envmap.enabled',
+    '(yes) Odbicia realizowane globaln¹ cubemap¹');
+  FindParameter('gfx.reflections.framerate',
+    '(1/300) Czêstotliwoœæ odœwie¿ania odbiæ otoczenia');
+  FindParameter('gfx.postfx.motionblur.enabled',
+    '(yes) Rozmycie powodowane ruchem');
+  FindParameter('gfx.smoke', '(yes) Wyœwietlanie dymu');
+  FindParameter('gfx.smoke.fidelity', '(1) 1-4 Mno¿nik iloœci cz¹stek dymu');
+  FindParameter('scalespeculars',
+    'skalowanie sk³adowej specular materia³ów dla kompatybilnoœci ze starymi modelami');
+  FindParameter('gfx.resource.sweep',
+    'usuwanie nieu¿ywanych tekstur z opengl, zalecane wy³¹czenie gdy pamiêæ karty graficznej jest wystarczaj¹ca');
+  FindParameter('gfx.resource.move',
+    'tryb konserwacji pamiêci przy usuwaniu nieu¿ywanych tekstur, mo¿e powodowaæ problemy na niektórych kartach');
+  FindParameter('debugmode',
+    '(no) yes: wy³¹cza logikê rozmyt¹ s³u¿¹c¹ do detekcji awarii, w³¹cza klawisze pomocnicze');
+  FindParameter('ai.trainman', 'wirtualny manewrowy');
+  FindParameter('soundenabled',
+    '(yes) no: wy³¹cza odgrywanie dŸwiêków przestrzennych');
+  FindParameter('enabletraction', '(yes) no: wy³¹cza ³amanie pantografu');
+  FindParameter('livetraction',
+    '(yes) no: lokomotywy elektryczne bêd¹ mia³y zasilanie, jeœli tylko podnios¹ pantografy');
+  FindParameter('physicslog',
+    '(no) yes: w³¹cza zapisywanie parametrów fizycznych dla wszystkich obsadzonych przez AI lub cz³owieka pojazdów');
+  FindParameter('debuglog',
+    '(3=yes) informacje o uruchamianiu i przebiegu dzia³ania symulacji: +1 - do pliku log.txt, +2 - wyœwietlanie w oknie, +4 - nazwy torów');
+  FindParameter('multiplelogs',
+    '(no) zapisywanie logów do katalogu /logs/ bez nadpisywania po ka¿dym uruchomieniu symulacji');
+  FindParameter('input.gamepad',
+    '(yes) no: ignorowanie sygna³u z gamepada, przydatne dla u¿ytkowników PoKeys');
+  FindParameter('mousescale',
+    '(3.2 0.5) czu³oœæ myszy, mo¿na dawaæ ujemne dla odwrócenia kierunku');
+  FindParameter('feedbackmode',
+    '(1) 0 - wy³¹czone, 1 - za³¹czone sterowanie diodami klawiatury (Caps Lock - CA/SHP, Scroll Lock - jazda na oporach rozruchowych), 2 - (Caps - CA, Scroll -SHP), 3 - LPT, 4 - PoKeys55, 5 - COM');
+  FindParameter('feedbackport',
+    'adres (dziesiêtnie) bazowy portu LPT dla feedbackmode 3 (zapalanie kontrolek wyjœciami LPT)');
+  FindParameter('friction', '(1.0) mno¿nik dla wspó³czynnika tarcia');
+  FindParameter('fieldofview', '(45) 15-75 k¹t widzenia kamery w pionie');
+  FindParameter('sound.volume', 'globalna g³oœnoœæ dŸwiêków');
+  FindParameter('sound.volume.vehicle',
+    'wzgledna glosnosc dzwiekow wydawanych przez pojazdy, gdzie X jest mnoznikiem w przedziale 0-1');
+  FindParameter('sound.volume.positional',
+    'wzgledna glosnosc pozycjonowanych dzwiekow emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
+  FindParameter('sound.volume.ambient',
+    'wzgledna glosnosc dzwiekow globalnych (o ujemnym zakresie) emitowanych przez eventy scenerii, gdzie X jest mnoznikiem w przedziale 0-1');
+  FindParameter('sound.volume.paused',
+    'stopien wyciszenia dzwieku przy zalaczonej pauzie');
+  FindParameter('maxtexturesize',
+    '(16384) skalowanie zbyt du¿ych tekstur do podanego rozmiaru');
+  FindParameter('multisampling',
+    '(2) wyg³adzanie krawêdzi (poprawia obraz, ale obni¿a FPS): 0 - wy³aczone, 1 - dwukrotne, 2 - czterokrotne, 3 - oœmiokrotne');
+  FindParameter('convertmodels',
+    '(135) tworzenie plików modeli binarnych E3D z T3D: 0 - wy³¹czone, +1 - nowe Opacity, +2 - z optymalizacj¹, +4 - z bananami, +128 - rozszerzony pod exe C++, niekompatybilny ze starymi');
+  FindParameter('anisotropicfiltering',
+    '(8) 1-16 jakoœæ filtrowania anizotropowego tekstur');
+  FindParameter('pyscreenrendererpriority',
+    '(normal, lower, lowest, idle) priorytet w¹tku pythonowego renderera. Odci¹¿a procesor zmniejszaj¹c odœwie¿anie ekranów w lokomotywach.');
+  FindParameter('splinefidelity',
+    '(1) 1-4 dodatkowy podzia³ trajektorii na ³ukach, zwiêkszaj¹cy kr¹g³oœæ');
+  FindParameter('lang', '(pl) jêzyk dla napisów');
+  FindParameter('python.threadedupload',
+    '(yes) wysylanie wygenerowanych obrazow ekranow przy uzyciu osobnego watku');
+  FindParameter('python.enabled',
+    '(domyslnie yes) wylacza w ogole generowanie tekstur przy uzyciu pythona');
+  FindParameter('gfx.skiprendering',
+    '(domyslnie no) wylacza w ogole wizualizacje symulacji, pozostawiajac jedynie ui');
+  FindParameter('crashdamage',
+    '(domyslnie yes) w³¹cza uszkodzenia sprzêgów i wykolejenia od zderzeñ');
+  FindParameter('gfx.postfx.chromaticaberration.enabled',
+    '(domyslnie no) Efekt aberracji chromatycznej');
+  FindParameter('compresstex',
+    '(yes) ¿¹da od sterownika kompresji ³adowanych tekstur tga');
+  FindParameter('gfx.reflections.fidelity',
+    '(0) malowanie odbic. 1: +modele stat. 2:+modele stat. i pojazdy');
+  FindParameter('python.mipmaps',
+    '(yes) Tworzenie mipmap dla tekstur generowanych skryptami pythona');
+  FindParameter('gfx.usegles', '');
+  FindParameter('gfx.shadergamma', '');
+  FindParameter('gfx.drawrange.factor.max', '');
+  FindParameter('gfx.shadow.rank.cutoff', '');
+  FindParameter('gfx.shadow.angle.min', '');
+  FindParameter('brakestep', 'prêdkoœæ przesuwania zaworu hamulca');
+  FindParameter('brakespeed', '');
 
   if Main.cbMaxcabtexturesize.ItemIndex > 0 then
-    FindParameter('maxcabtexturesize','skalowanie tekstur kabiny do podanego rozmiaru')
+    FindParameter('maxcabtexturesize',
+      'skalowanie tekstur kabiny do podanego rozmiaru')
   else
     RemoveParam('maxcabtexturesize');
 
   if not Main.chAngle.Checked then
     RemoveParam('gfx.angleplatform')
   else
-    FindParameter('gfx.angleplatform','');
+    FindParameter('gfx.angleplatform', '');
 
   if Main.chFPSLimiter.Checked then
-    FindParameter('fpslimit','ograniczenie fps')
+    FindParameter('fpslimit', 'ograniczenie fps')
   else
     RemoveParam('fpslimit');
 
   if frmSettingsAdv.seThreads.Value > 0 then
-    FindParameter('async.trainThreads','(0) Iloœæ w¹tków liczenia fizyki pojazdów (0 = w g³ównym w¹tku)')
+    FindParameter('async.trainThreads',
+      '(0) Iloœæ w¹tków liczenia fizyki pojazdów (0 = w g³ównym w¹tku)')
   else
     RemoveParam('async.trainThreads');
 
@@ -1157,71 +1204,106 @@ begin
   end;
 end;
 
-procedure TSettings.SaveSettings(const Path:string='eu07.ini';const OnlyOwnSettings:Boolean=False);
+procedure TSettings.SaveSettings(const Path: string = 'eu07.ini';
+const OnlyOwnSettings: Boolean = False);
 var
-  Settings, Par : TStringList;
-  i, Value : Integer;
+  Settings, Par: TStringList;
+  i, Value: Integer;
 begin
   SaveOwnSettings;
   Settings := TStringList.Create;
 
   CheckParams;
 
-  for i := 0 to Params.Count-1 do
+  for i := 0 to Params.Count - 1 do
   begin
     if Params[i].Name = 'width' then
     begin
       Par := TStringList.Create;
-      ExtractStrings(['x'],[' '],PChar(Main.cbResolution.Items[Main.cbResolution.ItemIndex]),Par);
+      ExtractStrings(['x'], [' '],
+        PChar(Main.cbResolution.Items[Main.cbResolution.ItemIndex]), Par);
       if Par.Count > 0 then
         Params[i].Value := Par[0];
       Par.Free;
     end
-    else
-    if Params[i].Name = 'height' then
+    else if Params[i].Name = 'height' then
     begin
       Par := TStringList.Create;
-      ExtractStrings(['x'],[' '],PChar(Main.cbResolution.Items[Main.cbResolution.ItemIndex]),Par);
+      ExtractStrings(['x'], [' '],
+        PChar(Main.cbResolution.Items[Main.cbResolution.ItemIndex]), Par);
       if Par.Count > 1 then
         Params[i].Value := Par[1];
       Par.Free;
     end
-    else
-    if Params[i].Name = 'fullscreenwindowed'            then SetCheckState(Main.chFullScreenWindowed.Checked,i) else
-    if Params[i].Name = 'fullscreen'                    then SetCheckState(Main.chFullScreen.Checked,i) else
-    if Params[i].Name = 'inactivepause'                 then SetCheckState(Main.chInactivepause.Checked,i) else
-    if Params[i].Name = 'pause'                         then SetCheckState(Main.chPause.Checked,i) else
-    if Params[i].Name = 'shadows'                       then SetCheckState(Main.chShadows.Checked,i) else
-    if Params[i].Name = 'vsync'                         then SetCheckState(Main.chVsync.Checked,i) else
-    if Params[i].Name = 'usevbo'                        then SetCheckState(Main.chUsevbo.Checked,i) else
-    if Params[i].Name = 'fullphysics'                   then SetCheckState(Main.chFullphysics.Checked,i) else
-    if Params[i].Name = 'gfx.resource.sweep'            then SetCheckState(frmSettingsAdv.chGfxresourcesweep.Checked,i) else
-    if Params[i].Name = 'gfx.resource.move'             then SetCheckState(frmSettingsAdv.chGfxresourcemove.Checked,i) else
-    if Params[i].Name = 'debugmode'                     then SetCheckState(Main.chDebugmode.Checked,i) else
-    if Params[i].Name = 'ai.trainman'                   then SetCheckState(Main.chTrainMan.Checked,i) else
-    if Params[i].Name = 'soundenabled'                  then SetCheckState(Main.chSoundenabled.Checked,i) else
-    if Params[i].Name = 'enabletraction'                then SetCheckState(Main.chEnabletraction.Checked,i) else
-    if Params[i].Name = 'livetraction'                  then SetCheckState(Main.chLivetraction.Checked,i) else
-    if Params[i].Name = 'physicslog'                    then SetCheckState(Main.chPhysicslog.Checked,i) else
-    if Params[i].Name = 'multiplelogs'                  then SetCheckState(Main.chMultiplelogs.Checked,i) else
-    if Params[i].Name = 'input.gamepad'                 then SetCheckState(not Main.chInputgamepad.Checked,i) else
-    if Params[i].Name = 'gfx.postfx.motionblur.enabled' then SetCheckState(Main.chMotionBlur.Checked,i) else
-    if Params[i].Name = 'gfx.envmap.enabled'            then SetCheckState(Main.chEnvmap.Checked,i) else
-    if Params[i].Name = 'gfx.smoke'                     then SetCheckState(Main.chSmoke.Checked,i) else
-    if Params[i].Name = 'gfx.extraeffects'              then SetCheckState(Main.chExtraEffects.Checked,i) else
-    if Params[i].Name = 'scalespeculars'                then SetCheckState(frmSettingsAdv.chScaleSpeculars.Checked,i) else
-    if Params[i].Name = 'gfx.shadowmap.enabled'         then SetCheckState(Main.chShadowMap.Checked,i) else
-    if Params[i].Name = 'python.threadedupload'         then SetCheckState(Main.chPythonThreadedUpload.Checked,i) else
-    if Params[i].Name = 'python.enabled'                then SetCheckState(Main.chPythonEnabled.Checked,i) else
-    if Params[i].Name = 'gfx.skiprendering'             then SetCheckState(Main.chSkipRendering.Checked,i) else
-    if Params[i].Name = 'crashdamage'                   then SetCheckState(Main.chCrashDamage.Checked,i) else
-    if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled'  then SetCheckState(Main.chChromaticAberration.Checked,i) else
-    if Params[i].Name = 'gfx.skippipeline'              then SetCheckState(Main.chSkipPipeline.Checked,i) else
-    if Params[i].Name = 'compresstex'                   then SetCheckState(frmSettingsAdv.chCompressTex.Checked,i) else
-    if Params[i].Name = 'gfx.usegles'                   then SetCheckState(frmSettingsAdv.chUseGLES.Checked,i) else
-    if Params[i].Name = 'gfx.shadergamma'               then SetCheckState(frmSettingsAdv.chShaderGamma.Checked,i) else
-    if Params[i].Name = 'python.mipmaps'                then SetCheckState(frmSettingsAdv.chMipmaps.Checked,i) else
-    if Params[i].Name = 'mousescale' then
+    else if Params[i].Name = 'fullscreenwindowed' then
+      SetCheckState(Main.chFullScreenWindowed.Checked, i)
+    else if Params[i].Name = 'fullscreen' then
+      SetCheckState(Main.chFullScreen.Checked, i)
+    else if Params[i].Name = 'inactivepause' then
+      SetCheckState(Main.chInactivepause.Checked, i)
+    else if Params[i].Name = 'pause' then
+      SetCheckState(Main.chPause.Checked, i)
+    else if Params[i].Name = 'shadows' then
+      SetCheckState(Main.chShadows.Checked, i)
+    else if Params[i].Name = 'vsync' then
+      SetCheckState(Main.chVsync.Checked, i)
+    else if Params[i].Name = 'usevbo' then
+      SetCheckState(Main.chUsevbo.Checked, i)
+    else if Params[i].Name = 'fullphysics' then
+      SetCheckState(Main.chFullphysics.Checked, i)
+    else if Params[i].Name = 'gfx.resource.sweep' then
+      SetCheckState(frmSettingsAdv.chGfxresourcesweep.Checked, i)
+    else if Params[i].Name = 'gfx.resource.move' then
+      SetCheckState(frmSettingsAdv.chGfxresourcemove.Checked, i)
+    else if Params[i].Name = 'debugmode' then
+      SetCheckState(Main.chDebugmode.Checked, i)
+    else if Params[i].Name = 'ai.trainman' then
+      SetCheckState(Main.chTrainMan.Checked, i)
+    else if Params[i].Name = 'soundenabled' then
+      SetCheckState(Main.chSoundenabled.Checked, i)
+    else if Params[i].Name = 'enabletraction' then
+      SetCheckState(Main.chEnabletraction.Checked, i)
+    else if Params[i].Name = 'livetraction' then
+      SetCheckState(Main.chLivetraction.Checked, i)
+    else if Params[i].Name = 'physicslog' then
+      SetCheckState(Main.chPhysicslog.Checked, i)
+    else if Params[i].Name = 'multiplelogs' then
+      SetCheckState(Main.chMultiplelogs.Checked, i)
+    else if Params[i].Name = 'input.gamepad' then
+      SetCheckState(not Main.Chinputgamepad.Checked, i)
+    else if Params[i].Name = 'gfx.postfx.motionblur.enabled' then
+      SetCheckState(Main.chMotionBlur.Checked, i)
+    else if Params[i].Name = 'gfx.envmap.enabled' then
+      SetCheckState(Main.chEnvmap.Checked, i)
+    else if Params[i].Name = 'gfx.smoke' then
+      SetCheckState(Main.chSmoke.Checked, i)
+    else if Params[i].Name = 'gfx.extraeffects' then
+      SetCheckState(Main.chExtraEffects.Checked, i)
+    else if Params[i].Name = 'scalespeculars' then
+      SetCheckState(frmSettingsAdv.chScaleSpeculars.Checked, i)
+    else if Params[i].Name = 'gfx.shadowmap.enabled' then
+      SetCheckState(Main.chShadowMap.Checked, i)
+    else if Params[i].Name = 'python.threadedupload' then
+      SetCheckState(Main.chPythonThreadedUpload.Checked, i)
+    else if Params[i].Name = 'python.enabled' then
+      SetCheckState(Main.chPythonEnabled.Checked, i)
+    else if Params[i].Name = 'gfx.skiprendering' then
+      SetCheckState(Main.chSkipRendering.Checked, i)
+    else if Params[i].Name = 'crashdamage' then
+      SetCheckState(Main.chCrashDamage.Checked, i)
+    else if Params[i].Name = 'gfx.postfx.chromaticaberration.enabled' then
+      SetCheckState(Main.chChromaticAberration.Checked, i)
+    else if Params[i].Name = 'gfx.skippipeline' then
+      SetCheckState(Main.chSkipPipeline.Checked, i)
+    else if Params[i].Name = 'compresstex' then
+      SetCheckState(frmSettingsAdv.chCompressTex.Checked, i)
+    else if Params[i].Name = 'gfx.usegles' then
+      SetCheckState(frmSettingsAdv.chUseGLES.Checked, i)
+    else if Params[i].Name = 'gfx.shadergamma' then
+      SetCheckState(frmSettingsAdv.chShaderGamma.Checked, i)
+    else if Params[i].Name = 'python.mipmaps' then
+      SetCheckState(frmSettingsAdv.chMipmaps.Checked, i)
+    else if Params[i].Name = 'mousescale' then
     begin
       if Main.chMouseInversionHorizontal.Checked then
         Params[i].Value := '-'
@@ -1240,52 +1322,48 @@ begin
       else
         Params[i].Value := Params[i].Value + ' 0.5';
     end
-    else
-    if Params[i].Name = 'feedbackmode'        then Params[i].Value := IntToStr(Main.cbFeedbackmode.ItemIndex) else
-    if Params[i].Name = 'feedbackport'        then Params[i].Value := Main.edFeedbackport.Text else
-    if Params[i].Name = 'friction'            then Params[i].Value := Main.edFriction.Text else
-    if Params[i].Name = 'fieldofview'         then Params[i].Value := Main.edFieldofview.Text else
-    if Params[i].Name = 'dynamiclights'       then Params[i].Value := Main.seDynamicLights.Value.ToString else
-    if Params[i].Name = 'async.trainThreads'  then Params[i].Value := frmSettingsAdv.seThreads.Value.ToString else
-    if Params[i].Name = 'fpslimit'            then Params[i].Value := Main.seFPSLimit.Text else
-    if Params[i].Name = 'gfxrenderer'         then
+    else if Params[i].Name = 'feedbackmode' then
+      Params[i].Value := IntToStr(Main.cbFeedbackmode.ItemIndex)
+    else if Params[i].Name = 'feedbackport' then
+      Params[i].Value := Main.edFeedbackport.Text
+    else if Params[i].Name = 'friction' then
+      Params[i].Value := Main.edFriction.Text
+    else if Params[i].Name = 'fieldofview' then
+      Params[i].Value := Main.edFieldofview.Text
+    else if Params[i].Name = 'dynamiclights' then
+      Params[i].Value := Main.seDynamicLights.Value.ToString
+    else if Params[i].Name = 'async.trainThreads' then
+      Params[i].Value := frmSettingsAdv.seThreads.Value.ToString
+    else if Params[i].Name = 'fpslimit' then
+      Params[i].Value := Main.seFPSLimit.Text
+    else if Params[i].Name = 'gfxrenderer' then
     begin
       case Main.cbGfxrenderer.ItemIndex of
-        0..1: Params[i].Value := 'full';
+        0 .. 1: Params[i].Value := 'full';
         2: Params[i].Value := 'legacy';
         3: Params[i].Value := 'simple';
         4: Params[i].Value := 'experimental';
       end;
     end
-    else
-    if Params[i].Name = 'sound.volume'  then
+    else if Params[i].Name = 'sound.volume' then
       Params[i].Value := FloatToStr(Main.tbSoundVolume.Position / 10)
-    else
-    if Params[i].Name = 'sound.volume.radio' then
+    else if Params[i].Name = 'sound.volume.radio' then
       Params[i].Value := FloatToStr(Main.tbRadioVolume.Position / 10)
-    else
-    if Params[i].Name = 'sound.volume.vehicle' then
+    else if Params[i].Name = 'sound.volume.vehicle' then
       Params[i].Value := FloatToStr(Main.tbVehiclesSounds.Position / 10)
-    else
-    if Params[i].Name = 'sound.volume.positional' then
+    else if Params[i].Name = 'sound.volume.positional' then
       Params[i].Value := FloatToStr(Main.tbPositionalsSounds.Position / 10)
-    else
-    if Params[i].Name = 'sound.volume.ambient' then
+    else if Params[i].Name = 'sound.volume.ambient' then
       Params[i].Value := FloatToStr(Main.tbGlobalSounds.Position / 10)
-    else
-    if Params[i].Name = 'sound.volume.paused' then
+    else if Params[i].Name = 'sound.volume.paused' then
       Params[i].Value := FloatToStr(Main.tbVolumePaused.Position / 10)
-    else
-    if Params[i].Name = 'gfx.shadow.angle.min' then
+    else if Params[i].Name = 'gfx.shadow.angle.min' then
       Params[i].Value := FloatToStr(Main.tbShadowSize.Position / 10)
-    else
-    if Params[i].Name = 'brakestep' then
+    else if Params[i].Name = 'brakestep' then
       Params[i].Value := FloatToStr(Main.tbBrakeStep.Position / 10)
-    else
-    if Params[i].Name = 'brakespeed' then
+    else if Params[i].Name = 'brakespeed' then
       Params[i].Value := FloatToStr(Main.tbBrakeSpeed.Position / 10)
-    else
-    if Params[i].Name = 'maxtexturesize' then
+    else if Params[i].Name = 'maxtexturesize' then
     begin
       case Main.cbMaxtexturesize.ItemIndex of
         0: Params[i].Value := '512';
@@ -1296,8 +1374,7 @@ begin
         5: Params[i].Value := '16384';
       end;
     end
-    else
-    if Params[i].Name = 'maxcabtexturesize' then
+    else if Params[i].Name = 'maxcabtexturesize' then
     begin
       case Main.cbMaxcabtexturesize.ItemIndex of
         1: Params[i].Value := '512';
@@ -1306,14 +1383,13 @@ begin
         4: Params[i].Value := '4096';
       end;
     end
-    else
-    if Params[i].Name = 'multisampling' then Params[i].Value := IntToStr(Main.cbMultisampling.ItemIndex) else
-    if Params[i].Name = 'convertmodels' then
+    else if Params[i].Name = 'multisampling' then
+      Params[i].Value := IntToStr(Main.cbMultisampling.ItemIndex)
+    else if Params[i].Name = 'convertmodels' then
       Params[i].Value := frmSettingsAdv.cbConvertmodels.Text
-    else
-    if Params[i].Name = 'gfx.smoke.fidelity' then Params[i].Value := IntToStr(Main.cbSmokeFidelity.ItemIndex+1)
-    else
-    if Params[i].Name = 'anisotropicfiltering' then
+    else if Params[i].Name = 'gfx.smoke.fidelity' then
+      Params[i].Value := IntToStr(Main.cbSmokeFidelity.ItemIndex + 1)
+    else if Params[i].Name = 'anisotropicfiltering' then
     begin
       case Main.cbAnisotropicfiltering.ItemIndex of
         0: Params[i].Value := '1';
@@ -1323,8 +1399,7 @@ begin
         4: Params[i].Value := '16';
       end;
     end
-    else
-    if Params[i].Name = 'pyscreenrendererpriority' then
+    else if Params[i].Name = 'pyscreenrendererpriority' then
     begin
       case Main.cbPyscreenrendererpriority.ItemIndex of
         0: Params[i].Value := 'normal';
@@ -1334,8 +1409,7 @@ begin
         4: Params[i].Value := 'off';
       end;
     end
-    else
-    if Params[i].Name = 'gfx.shadows.cab.range' then
+    else if Params[i].Name = 'gfx.shadows.cab.range' then
     begin
       case Main.cbShadowsCabRange.ItemIndex of
         0: Params[i].Value := '0';
@@ -1346,8 +1420,7 @@ begin
         5: Params[i].Value := '100';
       end;
     end
-    else
-    if Params[i].Name = 'gfx.reflections.framerate' then
+    else if Params[i].Name = 'gfx.reflections.framerate' then
     begin
       case Main.cbReflectionsFramerate.ItemIndex of
         0: Params[i].Value := '1';
@@ -1357,8 +1430,7 @@ begin
         4: Params[i].Value := '60';
       end;
     end
-    else
-    if Params[i].Name = 'shadowtune' then
+    else if Params[i].Name = 'shadowtune' then
     begin
       case Main.cbShadowMapSize.ItemIndex of
         0: Params[i].Value := '1024';
@@ -1368,7 +1440,7 @@ begin
       end;
 
       case Main.cbShadowRange.ItemIndex of
-       -1: Params[i].Value := Params[i].Value + ' 250 400 300';
+        - 1: Params[i].Value := Params[i].Value + ' 250 400 300';
         0: Params[i].Value := Params[i].Value + ' 250 25 300';
         1: Params[i].Value := Params[i].Value + ' 250 50 300';
         2: Params[i].Value := Params[i].Value + ' 250 150 300';
@@ -1376,89 +1448,102 @@ begin
         4: Params[i].Value := Params[i].Value + ' 250 400 300';
       end;
     end
-    else
-    if Params[i].Name = 'gfx.angleplatform' then
+    else if Params[i].Name = 'gfx.angleplatform' then
     begin
       Params[i].Value := 'vulkan';
     end
-    else
-    if Params[i].Name = 'gfx.drawrange.factor.max' then
+    else if Params[i].Name = 'gfx.drawrange.factor.max' then
     begin
-      Params[i].Value := IntToStr(Main.cbDrawRange.ItemIndex+1);
+      Params[i].Value := IntToStr(Main.cbDrawRange.ItemIndex + 1);
     end
-    else
-    if Params[i].Name = 'gfx.shadow.rank.cutoff' then
+    else if Params[i].Name = 'gfx.shadow.rank.cutoff' then
     begin
-      Params[i].Value := IntToStr(Main.cbShadowRank.ItemIndex+1);
+      Params[i].Value := IntToStr(Main.cbShadowRank.ItemIndex + 1);
     end
-    else
-    if Params[i].Name = 'debuglog' then
+    else if Params[i].Name = 'debuglog' then
     begin
       Value := 0;
-      if DebugLogSpeed then Inc(Value,8);
-      if DebugLogTrack then Inc(Value,4);
-      if Main.chDebugLogVis.Checked then Inc(Value,2);
-      if Main.chDebuglog.Checked then Inc(Value);
-      Params[i].Value :=  IntToStr(Value);
+      if DebugLogSpeed then
+        Inc(Value, 8);
+      if DebugLogTrack then
+        Inc(Value, 4);
+      if Main.chDebugLogVis.Checked then
+        Inc(Value, 2);
+      if Main.chDebuglog.Checked then
+        Inc(Value);
+      Params[i].Value := IntToStr(Value);
     end
-    else
-    if Params[i].Name = 'gfx.reflections.fidelity' then Params[i].Value := IntToStr(Main.cbReflectionsFidelity.ItemIndex) else
-    if Params[i].Name = 'splinefidelity' then Params[i].Value := IntToStr(Main.cbSplinefidelity.ItemIndex+1) else
-    if Params[i].Name = 'lang' then Params[i].Value := LowerCase(Main.cbLang.Text) else
-    if Params[i].Name = 'gfx.framebuffer.fidelity' then Params[i].Value := IntToStr(Main.cbBuffer.ItemIndex+1);
+    else if Params[i].Name = 'gfx.reflections.fidelity' then
+      Params[i].Value := IntToStr(Main.cbReflectionsFidelity.ItemIndex)
+    else if Params[i].Name = 'splinefidelity' then
+      Params[i].Value := IntToStr(Main.cbSplinefidelity.ItemIndex + 1)
+    else if Params[i].Name = 'lang' then
+      Params[i].Value := LowerCase(Main.cbLang.Text)
+    else if Params[i].Name = 'gfx.framebuffer.fidelity' then
+      Params[i].Value := IntToStr(Main.cbBuffer.ItemIndex + 1);
 
-    if Pos('//',Params[i].Desc) > 0 then
+    if Pos('//', Params[i].Desc) > 0 then
     begin
       if (Params[i].Name.Length = 0) then
         Settings.Add(Params[i].Desc)
       else
       begin
         case Params[i].Name.Length + Trim(Params[i].Value).Length + 1 of
-           0..7: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9#9#9#9#9 + Params[i].Desc);
-          8..15: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +   #9#9#9#9#9 + Params[i].Desc);
-         16..23: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +     #9#9#9#9 + Params[i].Desc);
-         24..31: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +       #9#9#9 + Params[i].Desc);
-         32..39: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +         #9#9 + Params[i].Desc);
-         40..47: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +           #9 + Params[i].Desc);
-         else Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + ' ' + Params[i].Desc);
+          0 .. 7: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +
+              #9#9#9#9#9#9 + Params[i].Desc);
+          8 .. 15: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +
+              #9#9#9#9#9 + Params[i].Desc);
+          16 .. 23: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +
+              #9#9#9#9 + Params[i].Desc);
+          24 .. 31: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +
+              #9#9#9 + Params[i].Desc);
+          32 .. 39: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +
+              #9#9 + Params[i].Desc);
+          40 .. 47: Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) +
+              #9 + Params[i].Desc);
+        else Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + ' ' +
+            Params[i].Desc);
         end;
       end;
     end
+    else if Params[i].Desc.IsEmpty then
+      Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value))
     else
-      if Params[i].Desc.IsEmpty then
-        Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value))
-      else
-        Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' + Params[i].Desc);
+      Settings.Add(Params[i].Name + ' ' + Trim(Params[i].Value) + #9#9 + '//' +
+        Params[i].Desc);
   end;
 
   if Path = 'eu07.ini' then
-    SettingsAge := SaveIni(Path,Settings)
+    SettingsAge := SaveIni(Path, Settings)
   else
-    SaveIni(Path,Settings);
+    SaveIni(Path, Settings);
 
   Settings.Free;
 end;
 
 procedure TSettings.SaveKeyboardSettings;
 var
-  i : Integer;
-  Settings : TStringList;
+  i: Integer;
+  Settings: TStringList;
 begin
   Settings := TStringList.Create;
 
-  for i := 0 to KeyParams.Count-1 do
-    Settings.Add(KeyParams[i].Name + ' ' + ' ' + KeyParams[i].Key2 + ' ' + KeyParams[i].Key3 + ' ' + KeyParams[i].Key + ' // ' + KeyParams[i].Desc);
+  for i := 0 to KeyParams.Count - 1 do
+    Settings.Add(KeyParams[i].Name + ' ' + ' ' + KeyParams[i].Key2 + ' ' +
+      KeyParams[i].Key3 + ' ' + KeyParams[i].Key + ' // ' + KeyParams[i].Desc);
 
-  SaveIni('eu07_input-keyboard.ini',Settings);
+  SaveIni('eu07_input-keyboard.ini', Settings);
 end;
 
-procedure TSettings.ChangeHDR(const Reinhard:Boolean=True);
+procedure TSettings.ChangeHDR(const Reinhard: Boolean = True);
 begin
   try
     if Reinhard then
-      CopyFile(PChar(Util.Dir + 'starter\Reinhard.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False)
+      CopyFile(PChar(Util.DIR + 'starter\Reinhard.glsl'),
+        PChar(Util.DIR + 'shaders\tonemapping.glsl'), False)
     else
-      CopyFile(PChar(Util.Dir + 'starter\ACESFilm.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False);
+      CopyFile(PChar(Util.DIR + 'starter\ACESFilm.glsl'),
+        PChar(Util.DIR + 'shaders\tonemapping.glsl'), False);
   except
     on E: Exception do
       ShowMessage(Util.LabelStr(CAP_ALGORITHM_FAULT) + ' ' + E.Message);
@@ -1467,11 +1552,11 @@ end;
 
 procedure TSettings.CheckSettingsFile;
 var
-  FileName   : string;
-  LastChange : TDateTime;
+  FileName: string;
+  LastChange: TDateTime;
 begin
   FileName := Util.DIR + 'eu07.ini';
-  FileAge(FileName,LastChange);
+  FileAge(FileName, LastChange);
 
   if LastChange > 0 then
   begin
