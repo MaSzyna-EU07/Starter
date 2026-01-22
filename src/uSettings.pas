@@ -830,11 +830,6 @@ begin
   else
     Settings.Add('SortByVehicleName=no');
 
-  if Main.cbDisplaySimLog.Checked then
-    Settings.Add('DisplaySimulatorLog=yes')
-  else
-    Settings.Add('DisplaySimulatorLog=no');
-
   if frmSettingsAdv.chIgnoreIrrevelant.Checked then
     Settings.Add('IgnoreIrrevelant=yes');
 
@@ -948,10 +943,6 @@ begin
       begin
         Main.miSortByTrackName.Checked := ParValue = 'no';
         Main.miSortByVehicleName.Checked := ParValue = 'yes';
-      end
-      else if SameText(ParName, 'DisplaySimulatorLog') then
-      begin
-        Main.cbDisplaySimLog.Checked := ParValue = 'yes';
       end
       else if SameText(ParName, 'exe') then
         Main.cbEXE.ItemIndex := Main.cbEXE.Items.IndexOf(ParValue)
