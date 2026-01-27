@@ -810,7 +810,8 @@ object Main: TMain
         'PL'
         'EN'
         'CZ'
-        'HU')
+        'HU'
+        'ZH')
     end
     object pnlVersion: TPanel
       Left = 500

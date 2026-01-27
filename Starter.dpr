@@ -59,7 +59,7 @@ begin
   Util := TUtil.Create;
   Data := TData.Create;
   TLexParser.LoadData;
-  TfrmStart.GetInstance.UpdateLabel('Tworzê okno programu...');
+  TfrmStart.GetInstance.UpdateLabel('TworzÄ™ okno programu...');
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Carbon');
   Application.Title := 'Starter MaSzyna';

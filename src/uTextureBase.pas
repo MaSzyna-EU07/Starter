@@ -96,11 +96,11 @@ type
     Cell : string;
     const
       TYPES : array[0..31] of String = (
-        ('Elektrowóz'), ('Spalinowóz'), ('Parowóz'), ('Szynobus'), ('EZT'), ('Roboczy'),
+        ('ElektrowÃ³z'), ('SpalinowÃ³z'), ('ParowÃ³z'), ('Szynobus'), ('EZT'), ('Roboczy'),
         ('Drezyna'), ('Tramwaj'), ('Wagon A'), ('Wagon B'), ('Wagon D'), ('Wagon E'),
         ('Wagon F'), ('Wagon G'), ('Wagon H'), ('Wagon I'), ('Wagon L'), ('Wagon P'), ('Wagon R'),
         ('Wagon S'), ('Wagon U'), ('Wagon V'), ('Wagon W'), ('Wagon X'), ('Wagon Z'),
-        ('Ciê¿arówka'), ('Autobus'), ('Samochód'), ('Cz³owiek'), ('Zwierzê'), ('Inny'), ('Nieznany')
+        ('CiÄ™Å¼arÃ³wka'), ('Autobus'), ('SamochÃ³d'), ('CzÅ‚owiek'), ('ZwierzÄ™'), ('Inny'), ('Nieznany')
         );
     function CheckFilters(const Tex: TTexture;const ModelID:Integer=0): Boolean;
     function AdaptRevDate(RevStr: string): TDate;
@@ -173,17 +173,17 @@ begin
   sgDepo.Cells[0,0] := 'Lp.';
   sgDepo.Cells[1,0] := 'Tekstura';
   sgDepo.Cells[2,0] := 'Miniatura';
-  sgDepo.Cells[3,0] := 'Podgl¹d';
+  sgDepo.Cells[3,0] := 'PodglÄ…d';
   sgDepo.Cells[4,0] := 'Model';
   sgDepo.Cells[5,0] := 'Operator';
   sgDepo.Cells[6,0] := 'Stacja';
   sgDepo.Cells[7,0] := 'Data rewizji';
   sgDepo.Cells[8,0] := 'Autor';
-  sgDepo.Cells[9,0] := 'Zdjêcia';
+  sgDepo.Cells[9,0] := 'ZdjÄ™cia';
 
   sgModels.Cells[0,0] := 'Lp.';
   sgModels.Cells[1,0] := 'Kategoria';
-  sgModels.Cells[2,0] := 'Œcie¿ka dostêpu';
+  sgModels.Cells[2,0] := 'ÅšcieÅ¼ka dostÄ™pu';
 end;
 
 procedure TfrmTextureBase.FormShow(Sender: TObject);

@@ -44,11 +44,11 @@ begin
    archive := archiveclass.Create(FilePath);
    try
       if not (archive is TJclSevenZipDecompressArchive) then
-         raise Exception.Create('Ten format nie jest rozpoznany przez bibliotekê 7z.dll.');
+         raise Exception.Create('Ten format nie jest rozpoznany przez bibliotekÄ™ 7z.dll.');
 
       archive.ListFiles;
 
-      s := Format('test.zip Iloœæ plików: %d'#13#10#13#10, [archive.ItemCount]);
+      s := Format('test.zip IloÅ›Ä‡ plikÃ³w: %d'#13#10#13#10, [archive.ItemCount]);
 
       for i := 0 to archive.ItemCount - 1 do
       begin
@@ -115,7 +115,7 @@ begin
   IniFile.ReadSection('VERIFY',FileList);
   for i := 0 to FileList.Count-1 do
     if not FileExists(Main.DIR + 'download\' + FileList[i]) then
-      s := 'Brak wymaganych plików';
+      s := 'Brak wymaganych plikÃ³w';
   FileList.Free;
 end;
 

@@ -390,20 +390,21 @@ begin
 end;
 
 function OmitAccents(const aStr: String): String;
-type
-  ASCIIString = type AnsiString(1251);
 begin
-  Result := string(ASCIIString(aStr));
+  // Process using UTF-8 encoding, preserving international characters
+  Result := aStr;
 end;
 
 function ContainsOmitAccents(const S1, S2: string): Boolean;
 begin
-  Result := ContainsText(OmitAccents(S1), OmitAccents(S2));
+  // Use UTF-8 compatible string comparison, using AnsiContainsText to support international characters
+  Result := AnsiContainsText(S1, S2);
 end;
 
 function SameTextOmitAccents(const S1, S2: string): Boolean;
 begin
-  Result := SameText(OmitAccents(S1), OmitAccents(S2));
+  // Use UTF-8 compatible case-insensitive comparison, using AnsiSameText to support international characters
+  Result := AnsiSameText(S1, S2);
 end;
 
 function RandomBoolean: Boolean;
@@ -440,123 +441,123 @@ end;
 
 procedure TUtil.StringsLoad;
 begin
-  LabelsArray[Ord(LAB_TRAIN_NAME), 1] := 'Nazwa pociπgu';
-  LabelsArray[Ord(LAB_TRAIN_NAME_CHANGE), 1] := 'Zmiana nazwy pociπgu';
+  LabelsArray[Ord(LAB_TRAIN_NAME), 1] := 'Nazwa pociƒÖgu';
+  LabelsArray[Ord(LAB_TRAIN_NAME_CHANGE), 1] := 'Zmiana nazwy pociƒÖgu';
   LabelsArray[Ord(LAB_CAR_NO), 1] := 'Numer wagonu:';
-  LabelsArray[Ord(LAB_AI_TRAIN), 1] := 'Pociπg prowadzony przez komputer.';
+  LabelsArray[Ord(LAB_AI_TRAIN), 1] := 'PociƒÖg prowadzony przez komputer.';
   LabelsArray[Ord(LAB_KEY1), 1] := 'Przycisk 1';
   LabelsArray[Ord(LAB_KEY2), 1] := 'Przycisk 2';
   LabelsArray[Ord(LAB_KEY3), 1] := 'Przycisk 3';
   LabelsArray[Ord(LAB_KEY_DESC), 1] := 'Opis funkcji';
   LabelsArray[Ord(LAB_WRONG_CONNECTION), 1] :=
-    'Niedopuszczalny rodzaj po≥πczenia miÍdzy tymi pojazdami.';
+    'Niedopuszczalny rodzaj po≈ÇƒÖczenia miƒôdzy tymi pojazdami.';
   LabelsArray[Ord(LAB_FILE_NOT_FOUND), 1] := 'Nie znaleziono wybranego pliku.';
-  LabelsArray[Ord(LAB_SAVE_PRESET), 1] := 'Zapis presetu ustawieÒ';
-  LabelsArray[Ord(LAB_SET_PRESET_NAME), 1] := 'Nadaj nazwÍ zestawu ustawieÒ:';
+  LabelsArray[Ord(LAB_SAVE_PRESET), 1] := 'Zapis presetu ustawie≈Ñ';
+  LabelsArray[Ord(LAB_SET_PRESET_NAME), 1] := 'Nadaj nazwƒô zestawu ustawie≈Ñ:';
   LabelsArray[Ord(LAB_RANDOM_TEX_EXCEPT), 1] :=
-    'Wystπpi≥ b≥πd przy losowaniu tekstur. SzczegÛ≥y b≥Ídu:';
+    'WystƒÖpi≈Ç b≈ÇƒÖd przy losowaniu tekstur. Szczeg√≥≈Çy b≈Çƒôdu:';
 
-  LabelsArray[Ord(LAB_LOAD_SETTINGS), 1] := 'Wczytywanie ustawieÒ...';
+  LabelsArray[Ord(LAB_LOAD_SETTINGS), 1] := 'Wczytywanie ustawie≈Ñ...';
   LabelsArray[Ord(LAB_LOAD_SCENERIES), 1] := 'Tworzenie listy scenariuszy...';
 
   LabelsArray[Ord(CAP_START_NO_EXE), 1] := 'Brak wybranego exe w ustawieniach';
   LabelsArray[Ord(CAP_START_NO_SCN), 1] := 'Brak wybranego scenariusza';
-  LabelsArray[Ord(CAP_START_GO_SEL_TRAIN), 1] := 'Przejdü do wyboru sk≥adu';
-  LabelsArray[Ord(CAP_START_SEL_TRAIN), 1] := 'Wybierz sk≥ad do prowadzenia';
+  LabelsArray[Ord(CAP_START_GO_SEL_TRAIN), 1] := 'Przejd≈∫ do wyboru sk≈Çadu';
+  LabelsArray[Ord(CAP_START_SEL_TRAIN), 1] := 'Wybierz sk≈Çad do prowadzenia';
   LabelsArray[Ord(CAP_START_SEL_VEHICLE), 1] := 'Wybierz pojazd do prowadzenia';
   LabelsArray[Ord(CAP_START_NO_STAFF), 1] := 'Brak obsady pojazdu';
-  LabelsArray[Ord(CAP_NO_VEHICLES), 1] := 'Wpis bez pojazdÛw. (Tor: %s)';
+  LabelsArray[Ord(CAP_NO_VEHICLES), 1] := 'Wpis bez pojazd√≥w. (Tor: %s)';
 
   LabelsArray[Ord(LOG_NOT_FOUND_EXE), 1] :=
     'Nie znaleziono pliku wykonywalnego (%s) symulatora.';
-  LabelsArray[Ord(LOG_INTERNAL_ERROR), 1] := 'B≥πd wewnÍtrzny Startera.';
+  LabelsArray[Ord(LOG_INTERNAL_ERROR), 1] := 'B≈ÇƒÖd wewnƒôtrzny Startera.';
   LabelsArray[Ord(LOG_DEPO_LOAD_EXCEPT), 1] :=
-    'B≥πd wczytywania magazynu. SzczegÛ≥y b≥Ídu:';
+    'B≈ÇƒÖd wczytywania magazynu. Szczeg√≥≈Çy b≈Çƒôdu:';
   LabelsArray[Ord(LOG_SCN_MINI_LOAD_FAULT), 1] :=
-    'Nie uda≥o siÍ wczytaÊ miniaturki scenariusza';
+    'Nie uda≈Ço siƒô wczytaƒá miniaturki scenariusza';
 
   LabelsArray[Ord(LOG_TEX_NO_FILE), 1] := 'Brak pliku';
   LabelsArray[Ord(LOG_TEX_NO_MODEL), 1] := 'Brak modelu dla tekstury';
   LabelsArray[Ord(LOG_TEX_NO_PHYSICS), 1] := 'Brak fizyki dla tekstury';
   LabelsArray[Ord(LOG_TEX_NO_MULTIMEDIA), 1] :=
-    'Brak pliku mulitmediÛw dla tekstury';
+    'Brak pliku mulitmedi√≥w dla tekstury';
 
-  LabelsArray[Ord(LOG_LOAD_SCN), 1] := '£adowanie scenerii';
+  LabelsArray[Ord(LOG_LOAD_SCN), 1] := '≈Åadowanie scenerii';
   LabelsArray[Ord(LOG_PARSE_SCN), 1] := 'Parsowanie scenerii';
 
   LabelsArray[Ord(LOG_NO_FILE), 1] := 'brak pliku tekstury.';
   LabelsArray[Ord(LOG_NO_MODEL), 1] := 'brak pliku modelu.';
   LabelsArray[Ord(LOG_NO_PHYSICS), 1] := 'brak pliku fizyki.';
-  LabelsArray[Ord(LOG_NO_MULTIMEDIA), 1] := 'brak pliku multimediÛw.';
-  LabelsArray[Ord(LOG_CHECK_VALUE_FAULT), 1] := 'B≥πd sprawdzania wartoúci';
+  LabelsArray[Ord(LOG_NO_MULTIMEDIA), 1] := 'brak pliku multimedi√≥w.';
+  LabelsArray[Ord(LOG_CHECK_VALUE_FAULT), 1] := 'B≈ÇƒÖd sprawdzania warto≈õci';
   LabelsArray[Ord(LOG_CHECK_PHYSICS_FILE), 1] :=
-    'Naleøy sprawdziÊ plik .fiz dla';
+    'Nale≈ºy sprawdziƒá plik .fiz dla';
   LabelsArray[Ord(LOG_UNSUPPORTED_LOAD), 1] :=
-    'zastosowany nieobs≥ugiwany ≥adunek przez pojazd';
+    'zastosowany nieobs≈Çugiwany ≈Çadunek przez pojazd';
 
   LabelsArray[Ord(LOG_DEPO_PARSE_FAULT), 1] :=
-    'B≥πd parsowania magazynu. Linia:';
-  LabelsArray[Ord(LOG_DEPO_SAVE_FAULT), 1] := 'B≥πd zapisu magazynu.';
+    'B≈ÇƒÖd parsowania magazynu. Linia:';
+  LabelsArray[Ord(LOG_DEPO_SAVE_FAULT), 1] := 'B≈ÇƒÖd zapisu magazynu.';
   LabelsArray[Ord(LOG_PHYSICS_PARSE_FAULT), 1] :=
-    'B≥πd prztwarzania elementu fizyki. Token:';
+    'B≈ÇƒÖd prztwarzania elementu fizyki. Token:';
 
   LabelsArray[Ord(CAP_LOAD_SETTINGS_FAULT), 1] :=
-    'B≥πd wczytywania ustawieÒ (plik %s).';
+    'B≈ÇƒÖd wczytywania ustawie≈Ñ (plik %s).';
   LabelsArray[Ord(CAP_PARAMETER), 1] := 'Parametr:';
-  LabelsArray[Ord(CAP_INVALID_VALUE), 1] := 'B≥Ídna wartoúÊ:';
-  LabelsArray[Ord(CAP_FAULT_DETAIL), 1] := 'SzczegÛ≥y b≥Ídu:';
+  LabelsArray[Ord(CAP_INVALID_VALUE), 1] := 'B≈Çƒôdna warto≈õƒá:';
+  LabelsArray[Ord(CAP_FAULT_DETAIL), 1] := 'Szczeg√≥≈Çy b≈Çƒôdu:';
   LabelsArray[Ord(CAP_ALGORITHM_FAULT), 1] :=
-    'Wystπpi≥ b≥πd przy prÛbie zmiany algorytmu. SzczegÛ≥y b≥Ídu:';
+    'WystƒÖpi≈Ç b≈ÇƒÖd przy pr√≥bie zmiany algorytmu. Szczeg√≥≈Çy b≈Çƒôdu:';
   LabelsArray[Ord(CAP_SET_CHANGED), 1] :=
-    'Wykryto zewnÍtrzne zmiany w ustawieniach symulatora. Czy wczytaÊ ustawienia ponownie?';
+    'Wykryto zewnƒôtrzne zmiany w ustawieniach symulatora. Czy wczytaƒá ustawienia ponownie?';
 
   LabelsArray[Ord(CAP_FILE_NOT_FOUND), 1] := 'Nie znaleziono pliku: %s';
   LabelsArray[Ord(CAP_LOAD_MINI_FAULT), 1] :=
-    'Nie uda≥o siÍ wczytaÊ miniaturki pojazdu %s';
+    'Nie uda≈Ço siƒô wczytaƒá miniaturki pojazdu %s';
   LabelsArray[Ord(CAP_REMOVE_OLD_VER_FAULT), 1] :=
-    'Nie uda≥o siÍ usunπÊ poprzedniej wersji Startera. SzczegÛ≥y b≥Ídu: %s';
+    'Nie uda≈Ço siƒô usunƒÖƒá poprzedniej wersji Startera. Szczeg√≥≈Çy b≈Çƒôdu: %s';
 
   LabelsArray[Ord(CAP_YES), 1] := 'Tak';
   LabelsArray[Ord(CAP_NO), 1] := 'Nie';
   LabelsArray[Ord(CAP_NO_DIR), 1] := 'Brak katalogu %s';
-  LabelsArray[Ord(CAP_NO_WEIGHTS), 1] := 'Brak informacji o wagach ≥adunkÛw.';
+  LabelsArray[Ord(CAP_NO_WEIGHTS), 1] := 'Brak informacji o wagach ≈Çadunk√≥w.';
   LabelsArray[Ord(CAP_NO_SCN), 1] := 'Nie znaleziono scenariuszy.';
-  LabelsArray[Ord(CAP_NO_VEHICLES_2), 1] := 'Nie znaleziono pojazdÛw.';
+  LabelsArray[Ord(CAP_NO_VEHICLES_2), 1] := 'Nie znaleziono pojazd√≥w.';
   LabelsArray[Ord(CAP_NO_PHYSICS), 1] := 'Nie znaleziono danych taboru.';
   LabelsArray[Ord(CAP_NO_EXE), 1] :=
     'Nie znaleziono pliku wykonywalnego symulatora.';
-  LabelsArray[Ord(CAP_ERRORS), 1] := 'Moøliwa b≥Ídna instalacja symulatora.';
+  LabelsArray[Ord(CAP_ERRORS), 1] := 'Mo≈ºliwa b≈Çƒôdna instalacja symulatora.';
   LabelsArray[Ord(CAP_PROGRAM_FILES), 1] :=
     'Program zainstalowany w katalogu Program Files.';
   LabelsArray[Ord(CAP_CREATE_FILE_FAULT), 1] :=
-    'Nie uda≥o siÍ utworzyÊ pliku: %s';
+    'Nie uda≈Ço siƒô utworzyƒá pliku: %s';
   LabelsArray[Ord(CAP_LOGO_FAULT), 1] :=
-    'B≥πd obs≥ugi logo. SzczegÛ≥y b≥Ídu: %s';
-  LabelsArray[Ord(CAP_CURRENT_VERSION), 1] := 'Posiadasz najnowszπ wersjÍ.';
+    'B≈ÇƒÖd obs≈Çugi logo. Szczeg√≥≈Çy b≈Çƒôdu: %s';
+  LabelsArray[Ord(CAP_CURRENT_VERSION), 1] := 'Posiadasz najnowszƒÖ wersjƒô.';
   LabelsArray[Ord(CAP_NEWER_VERSION_ASK), 1] :=
-    'DostÍpna jest nowsza wersja. ZaktualizowaÊ program?';
-  LabelsArray[Ord(CAP_UPDATE_FAULT), 1] := 'B≥πd aktualizacji';
+    'Dostƒôpna jest nowsza wersja. Zaktualizowaƒá program?';
+  LabelsArray[Ord(CAP_UPDATE_FAULT), 1] := 'B≈ÇƒÖd aktualizacji';
   LabelsArray[Ord(CAP_UPDATE_FAULT_EXT), 1] :=
-    'Wystπpi≥ b≥πd podczas aktualizacji programu.';
-  LabelsArray[Ord(CAP_UPDATED_PROGRAM), 1] := 'Program zosta≥ zaktualizowany.';
-  LabelsArray[Ord(CAP_UPDATING), 1] := 'AktualizujÍ...';
-  LabelsArray[Ord(CAP_OPERATION_FAULT), 1] := 'Wystπpi≥ b≥πd podczas operacji.';
+    'WystƒÖpi≈Ç b≈ÇƒÖd podczas aktualizacji programu.';
+  LabelsArray[Ord(CAP_UPDATED_PROGRAM), 1] := 'Program zosta≈Ç zaktualizowany.';
+  LabelsArray[Ord(CAP_UPDATING), 1] := 'Aktualizujƒô...';
+  LabelsArray[Ord(CAP_OPERATION_FAULT), 1] := 'WystƒÖpi≈Ç b≈ÇƒÖd podczas operacji.';
   LabelsArray[Ord(CAP_REMOVE_ALL_VEHICLES), 1] :=
-    'UsunπÊ wszystkie pojazdy na scenerii?';
+    'UsunƒÖƒá wszystkie pojazdy na scenerii?';
 
   LabelsArray[Ord(CAP_LOADING_DEPOT), 1] := 'Wczytywanie taboru...';
   LabelsArray[Ord(CAP_LOADING_PHYSICS), 1] := 'Wczytywanie fizyki...';
   LabelsArray[Ord(CAP_LOADING_SCN), 1] := 'Wczytywanie scenerii...';
-  LabelsArray[Ord(CAP_LOADING_WEIGHTS), 1] := 'Wczytywanie ≥adunkÛw...';
+  LabelsArray[Ord(CAP_LOADING_WEIGHTS), 1] := 'Wczytywanie ≈Çadunk√≥w...';
 
   LabelsArray[Ord(CAP_REMOVE_ALL_VEHICLES), 1] :=
-    'UsunπÊ wszystkie pojazdy na scenerii?';
+    'UsunƒÖƒá wszystkie pojazdy na scenerii?';
   LabelsArray[Ord(CAP_REMOVE_ALL_VEHICLES), 1] :=
-    'UsunπÊ wszystkie pojazdy na scenerii?';
+    'UsunƒÖƒá wszystkie pojazdy na scenerii?';
   LabelsArray[Ord(CAP_REMOVE_ALL_VEHICLES), 1] :=
-    'UsunπÊ wszystkie pojazdy na scenerii?';
+    'UsunƒÖƒá wszystkie pojazdy na scenerii?';
   LabelsArray[Ord(CAP_REMOVE_ALL_VEHICLES), 1] :=
-    'UsunπÊ wszystkie pojazdy na scenerii?';
+    'UsunƒÖƒá wszystkie pojazdy na scenerii?';
 
 end;
 
